@@ -9,6 +9,8 @@ $user_obj = isset($_SESSION[CURRENT_USER])?$_SESSION[CURRENT_USER]:false;
 
 $course_id = isset($_SESSION[COURSE_ID])?$_SESSION[COURSE_ID]:false;
 
+$use_waiting_room = isset($_SESSION[USE_WAITING_ROOM])?$_SESSION[USE_WAITING_ROOM]:false;
+
 require_once dirname(__FILE__).'/classes/IntegrationTandemBLTI.php';
 
 
@@ -24,7 +26,7 @@ if (!$user_obj || !$course_id) {
 	
 	$lti_context = unserialize($_SESSION[LTI_CONTEXT]);
 	
-	$gestorBD	= new GestorBD();
+	$gestorBD = new GestorBD();
 	$users_course = $gestorBD->obte_llistat_usuaris($course_id, $user_obj->id);
 	$is_reload = isset($_POST['reload'])?$_POST['reload']!=null:false;
 	
@@ -514,9 +516,22 @@ if (!$user_obj || !$course_id) {
 				<div id="content">
 					<span class="welcome"><?php echo $LanguageInstance->get('welcome')?> <?php echo $name ?>!</span><br/>
 					<form action="#" method="post" id="main_form" class="login_form">
+                                            
+                                         <?php     
+                                           
+                                           
+                                            
+                                            echo '<div>Lenguaje de la sesion: '.$lang = $_SESSION[LANG].'</div>'.'<br>';
+                                            echo 'ID del Curso: '.$course_id.'<br>';
+                                            echo 'ID Usuario: '.$user_obj->id.'<br>';
+                                            print_r($array_exercises);
+                                            echo '<br>';
+                                            ?>   
+                                            
 						<?php if ($array_exercises!==false && is_array($array_exercises) && count($array_exercises)>0) {?>
-								<fieldset>
-								<?php 
+							<?php if (!$use_waiting_room)	{ ?>
+                                                            <fieldset>
+                                                               <?php 
 									if ($users_course && count($users_course)>0) {
 									?>
 									<label for="select_user" title="1. <?php echo $LanguageInstance->get('select_users')?>"><img class="point" src="css/images/p1.png" alt="1. <?php echo $LanguageInstance->get('select_users')?>" /></label>
@@ -534,9 +549,45 @@ if (!$user_obj || !$course_id) {
 							?> 
 							<label for="not_users" title="<?php echo $msg?>"><?php echo $msg?></label>
 							<?php } ?>
+                                                        
+                                                       
 								</fieldset>
+                                                                <?php } else { 
+                                                                    /*********************************/
+                                                                
+                                                        
+                                                        echo '<h1>DENTRO!!!!</h1>';
+                                                        
+                                                        echo '<div>'.$lang = $_SESSION[LANG].'</div>';
+                                                        echo $course_id;
+                                                        echo $user_obj->id;
+                                                        
+                                                                $idExercise = isset($_GET['id_exercise']) ? $_GET['id_exercise'] : '';
+
+                                                                
+                                                                $insert = isset($_GET['insert']) ? $_GET['insert'] : '';
+                                                                if($insert&&$idExercise){
+                                                                    $insertParams=$gestorBD->insertUserAndRoom($_SESSION[LANG],$course_id,$idExercise,$use_waiting_room,$user_obj->id);
+                                                                }
+                                                                
+                                                                /*
+                                                                $update = isset($_GET['update']) ? $_GET['update'] : '';
+                                                                if($update&&$idExercise){
+                                                                    $gestorBD->updateUserAndRoom($_SESSION[LANG],$course_id);
+                                                                }
+
+                                                                $delete = isset($_GET['delete']) ? $_GET['delete'] : '';
+                                                                if($delete&&$idExercise){
+                                                                    $gestorBD->deleteUserAndRoom($_SESSION[LANG],$course_id);
+                                                                }
+                                                                */
+                                                                
+                                                               }
+                                                        
+                                                       /*****************************/
+                                                        ?>
 								<fieldset>
-									<?php if ($array_exercises!==false &&
+                                                                    <?php if ($array_exercises!==false &&
 									 is_array($array_exercises) &&
 									 count($array_exercises)>0) {?>
 										<label for="select_exercise" title="2. <?php echo $LanguageInstance->get('select_exercise')?>"><img class="point" src="css/images/p2.png" alt="2. <?php echo $LanguageInstance->get('select_exercise')?>" /></label>
