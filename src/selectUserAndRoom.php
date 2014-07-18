@@ -13,6 +13,8 @@ $use_waiting_room = isset($_SESSION[USE_WAITING_ROOM])?$_SESSION[USE_WAITING_ROO
 
 require_once dirname(__FILE__).'/classes/IntegrationTandemBLTI.php';
 
+require_once dirname(__FILE__).'/classes/manager_waiting_room.php';
+
 
 if (!$user_obj || !$course_id) {
 	//Tornem a l'index
@@ -562,27 +564,36 @@ if (!$user_obj || !$course_id) {
                                                         echo $course_id;
                                                         echo $user_obj->id;
                                                         
-                                                                $idExercise = isset($_GET['id_exercise']) ? $_GET['id_exercise'] : '';
+                                                        $oManagerWaitingRoom = new ManagerWaitingRoom();
+                                                         
+                                                        $idExercise = isset($_GET['id_exercise']) ? $_GET['id_exercise'] : '';
 
-                                                                
-                                                                $insert = isset($_GET['insert']) ? $_GET['insert'] : '';
-                                                                if($insert&&$idExercise){
-                                                                    $insertParams=$gestorBD->insertUserAndRoom($_SESSION[LANG],$course_id,$idExercise,$use_waiting_room,$user_obj->id);
-                                                                }
-                                                                
-                                                                /*
-                                                                $update = isset($_GET['update']) ? $_GET['update'] : '';
-                                                                if($update&&$idExercise){
-                                                                    $gestorBD->updateUserAndRoom($_SESSION[LANG],$course_id);
-                                                                }
 
-                                                                $delete = isset($_GET['delete']) ? $_GET['delete'] : '';
-                                                                if($delete&&$idExercise){
-                                                                    $gestorBD->deleteUserAndRoom($_SESSION[LANG],$course_id);
-                                                                }
-                                                                */
+                                                        $insert = isset($_GET['insert']) ? $_GET['insert'] : '';
+                                                        if($insert&&$idExercise){
+                                                            $insertParams=$oManagerWaitingRoom->insertUserAndRoom($_SESSION[LANG],$course_id,$idExercise,$use_waiting_room,$user_obj->id);
+                                                        }
+
+                                                        $something1 = $oManagerWaitingRoom->check_offered_exercises($_SESSION[LANG], $course_id);
+
+                                                        var_dump($something1);
+                                                        
+                                                        $something2 =$oManagerWaitingRoom->offer_exercise($_SESSION[LANG],$course_id,$idExercise);
+
+                                                        var_dump($something2);
+                                                        /*
+                                                        $update = isset($_GET['update']) ? $_GET['update'] : '';
+                                                        if($update&&$idExercise){
+                                                            $gestorBD->updateUserAndRoom($_SESSION[LANG],$course_id);
+                                                        }
+
+                                                        $delete = isset($_GET['delete']) ? $_GET['delete'] : '';
+                                                        if($delete&&$idExercise){
+                                                            $gestorBD->deleteUserAndRoom($_SESSION[LANG],$course_id);
+                                                        }
+                                                        */
                                                                 
-                                                               }
+                                                        }
                                                         
                                                        /*****************************/
                                                         ?>
