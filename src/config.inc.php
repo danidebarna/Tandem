@@ -14,6 +14,6 @@
 define('BD_HOST', 'localhost');
 define('BD_NAME', 'tandem');
 define('BD_USERNAME', 'tandem');
-define('BD_PASSWORD', 'tandem');
+define('BD_PASSWORD', 'tresipunt');
 define('PROTECTED_FOLDER', dirname(__FILE__).'/xml');
 define('GOOGLE_ANALYTICS_ID', '');

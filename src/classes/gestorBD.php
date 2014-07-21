@@ -1467,6 +1467,22 @@ class GestorBD {
         }
     }
     
+    public function upDateWaitingTandemRoom($courseID){
+        
+       $sql="SELECT ce.id_exercise, e.name, wr.language, coalesce(wr.number_user_waiting,0) as number_user_waiting FROM `course_exercise` as ce 
+            inner join exercise as e on ce.id_exercise = e.id
+            left join waiting_room as wr on ce.id_course = ce.id_course and ce.id_exercise = wr.id_exercise and wr.number_user_waiting>0
+            WHERE ce.id_course = ".$courseID." order by ce.id_exercise, wr.language";
+       
+       $result = $this->consulta($sql);
+        if ($this->numResultats($result) > 0) {
+            $row = $this->obteComArray($result);
+            return $row;
+        } else {
+            return false;
+        }
+    }
+ 
 }
 
 ?>

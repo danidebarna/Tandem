@@ -33,7 +33,14 @@ $mWT = array('waiting'=>$aWaiting,'tandem'=>$aTandem);
 $oJson=json_encode($mWT,JSON_FORCE_OBJECT);
 
 
-echo $oJson;
+//echo $oJson;
 
 
+$uniqueArray = $oWiewport->upDateWaitingTandemRoom($courseID);
+
+
+$oJsonUnique = json_encode($uniqueArray,JSON_FORCE_OBJECT);
+
+
+echo $oJsonUnique;
 

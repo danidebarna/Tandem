@@ -1,0 +1,101 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 19-jul-2014, 10:16:56
+    Author     : Dani Work
+*/
+
+.tandem-room-content{
+    float:left;
+    min-width:580px;
+    height:auto;
+    background-color:grey;
+    z-index:1;
+    margin-bottom:20px;
+}
+
+.tandem-room-left{
+    float:left;
+    width:290px;
+    height:auto;
+    border-style: solid;
+    border-right-color: white;
+    border-right-width: 2px;
+}
+
+.tandem-room-right{
+    float:left;
+    width:290px;
+    height:auto;
+}
+
+.lineWT{
+    border-style: solid;
+    border-bottom-color: white;
+    border-bottom-width: 2px; 
+}
+
+.title-waiting{
+  background-color: graytext;
+  color:#ffffff;  
+  text-align:center;
+  font-size: medium;
+  padding:10px 0 10px 0;
+}
+
+.title-tandem{
+    background-color: graytext;
+    color:#ffffff; 
+    text-align:center;  
+    font-size: medium;
+    padding:10px 0 10px 0;
+}
+
+.cleaner{
+   
+    clear: both;
+}
+
+
+.common-waiting-tandem_users{
+    
+    margin-left:10px;
+}
+
+.waiting-users-zero{
+    color:red;
+    
+}
+
+.waiting-users-more-one{
+     color:ivory;
+   
+}
+
+
+.tandem-users-more-one{
+     color:ivory;
+    
+}
+.exButtonWaiting{
+   
+    
+}
+
+.exButtonTandem{
+    
+}
+
+#timeline{
+    margin-bottom:15px;
+    
+    
+}
+#logo{
+    margin-top:60px;
+    
+}
+

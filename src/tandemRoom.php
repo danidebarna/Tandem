@@ -565,9 +565,57 @@ if (!$user_obj || !$course_id) {
                     //http://stackoverflow.com/questions/11922383/access-process-nested-objects-arrays-or-json
                   
                     var data = data;
+                    
+                    var localLanguage = "<?php echo $_GET['localLanguage']; ?>"; 
+
+                    sumatorioWaiting = '';
+                    sumatorioWaiting += '<li class="lineWT title-waiting">WAITING</li>';
+                    
+                    sumatorioTandem = '';
+                    sumatorioTandem += '<li class="lineWT title-tandem">TANDEM</li>';
+                    
+                    for (var i in data){
+                        
+                        var id_exercise = data[i]['id_exercise'];
+                        
+                        var name = data[i]['name'];
+                       
+                        var language = data[i]['language'];
+                       
+                        var number_user_waiting = data[i]['number_user_waiting'];
+                        
+                        if(localLanguage != language){
+                            //waiting
+                            //alert('primera opcio');
+                            sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="submit" name="'+id_exercise+'" id="'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+'</label></li>';
+                            
+                        }else{
+                            //tandem
+                            //alert('segona opcio');
+                            sumatorioTandem += '<li class="lineWT"><input class="exButtonTandem" type="submit" name="'+id_exercise+'" id="'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users tandem-users-more-one">'+number_user_waiting+'</label></li>';
+                            
+                        }
+                        
+                        //alert(id_exercise+'-'+name+'-'+language+'-'+number_user_waiting);
+                        
+                    }
+                    
+                    $('.tandem-room-left ul').html(sumatorioWaiting);
+                    
+                    $('.tandem-room-right ul').html(sumatorioTandem);
+                    
+                    
+                    sumatorioWaiting='';
+                    
+                    sumatorioTandem='';
+                    
+                    /*
+                     
+                    // Manera antiga de fer-ho ELIMINAR!!!!
                     //Waiting Creation
                     var sumatorioWaiting='';
                     sumatorioWaiting += '<li class="lineWT title-waiting">WAITING</li>';
+                    
                     
                     for (var i in data['waiting']){
                         var index1 = data['waiting'][i]['id_exercise'];
@@ -580,6 +628,7 @@ if (!$user_obj || !$course_id) {
                         //alert(index1+'-'+index2);
                         }
                     }
+                    
                     $('.tandem-room-left ul').html(sumatorioWaiting);
                     sumatorioWaiting='';
                     
@@ -596,7 +645,7 @@ if (!$user_obj || !$course_id) {
                     }
                     $('.tandem-room-right ul').html(sumatorioTandem);
                     sumatorioTandem='';
-                    
+                    */
                 });
             }
             </script>
