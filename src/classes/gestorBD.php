@@ -394,6 +394,7 @@ class GestorBD {
                 'where t.id>' . $id_last_insert . ' AND id_course = ' . $id_course . ' AND id_resource_lti = ' . $this->escapeString($id_resource_lti) . ' and id_user_guest = ' . $id_user
                 . ' and is_guest_user_logged=0 and is_finished=0 order by t.created desc limit 0,1 ';
         $result = $this->consulta($sql);
+        
         if ($this->numResultats($result) > 0) {
             if ($return_array) {
                 $row = $this->obteComArray($result);
@@ -1260,7 +1261,8 @@ class GestorBD {
 
     /*     * ****************************************************************** */
     /*     * ********* M A N A G E   W A I T I N G    R O O M ***************** */
-
+    /*     * ****************************************************************** */
+    
     /**
      * Insert User in waiting room
      * @param type $language
@@ -1290,34 +1292,7 @@ class GestorBD {
         return $result;
     }
 
-    /**
-     * Move the current user to history of waiting room
-     * @param type $id_waiting_room
-     * @param type $id_user
-     * @param type $status
-     * @return type
-     */
-    private function moveUserToHistory($id_waiting_room, $id_user, $status = 'assigned') {
-        $ok = false;
-        //1. Check in waiting room user
-        $sql = 'Select * FROM `waiting_room_user` WHERE `id_waiting_room` = ' . $this->escapeString($id_waiting_room) . ' AND `id_user` = ' . $this->escapeString($id_user);
-        $result = $this->consulta($sql);
-        if ($this->numResultats($result) > 0) {
-            $object = $this->obteObjecteComArray($result);
-            $id_user_wating_room = $object['id'];
-            $created = $object['created'];
-            //2.Insert in history table
-            $sqlInsert = 'INSERT INTO `waiting_room_user_history` (`id`, `id_waiting_room`, `id_user`, `status`, `created`, `created_history`) VALUES (NULL, ' . $this->escapeString($id_waiting_room) . ', ' . $this->escapeString($id_user) . ', ' . $this->escapeString($status) . ', ' . $this->escapeString($created) . ', NOW())';
-            if ($this->consulta($sqlInsert)) {
-                //3. Delete from waiting_room_user
-                $sqlDelete = 'DELETE FROM `waiting_room_user` WHERE `id` = ' . $this->escapeString($id_user_wating_room);
-                if ($this->consulta($sqlDelete)) {
-                    $ok = $this->addOrRemoveUserToWaitingRoom($id_waiting_room, -1);
-                }
-            }
-        }
-        return $ok;
-    }
+    
 
     /**
      * Add or remove User to waiting room
@@ -1358,6 +1333,36 @@ class GestorBD {
         return $ok;
     }
 
+    
+    /**
+     * Move the current user to history of waiting room
+     * @param type $id_waiting_room
+     * @param type $id_user
+     * @param type $status
+     * @return type
+     */
+    private function moveUserToHistory($id_waiting_room, $id_user, $status = 'assigned') {
+        $ok = false;
+        //1. Check in waiting room user
+        $sql = 'Select * FROM `waiting_room_user` WHERE `id_waiting_room` = ' . $this->escapeString($id_waiting_room) . ' AND `id_user` = ' . $this->escapeString($id_user);
+        $result = $this->consulta($sql);
+        if ($this->numResultats($result) > 0) {
+            $object = $this->obteObjecteComArray($result);
+            $id_user_wating_room = $object['id'];
+            $created = $object['created'];
+            //2.Insert in history table
+            $sqlInsert = 'INSERT INTO `waiting_room_user_history` (`id`, `id_waiting_room`, `id_user`, `status`, `created`, `created_history`) VALUES (NULL, ' . $this->escapeString($id_waiting_room) . ', ' . $this->escapeString($id_user) . ', ' . $this->escapeString($status) . ', ' . $this->escapeString($created) . ', NOW())';
+            if ($this->consulta($sqlInsert)) {
+                //3. Delete from waiting_room_user
+                $sqlDelete = 'DELETE FROM `waiting_room_user` WHERE `id` = ' . $this->escapeString($id_user_wating_room);
+                if ($this->consulta($sqlDelete)) {
+                    $ok = $this->addOrRemoveUserToWaitingRoom($id_waiting_room, -1);
+                }
+            }
+        }
+        return $ok;
+    }
+    
     /**
      * We selected the exercises that language is different from the user and select the same course.
      * @param string $language
@@ -1420,6 +1425,13 @@ class GestorBD {
             $this->check_offered_exercises();
         }
     }
+    
+    
+    /***************************************************************************/
+    /*   ASPECTE VISUAL DEL TANDEM WAITING ROOM  */
+    /****************************************************************************/
+    
+    
     
     public function updateWaiting($language,$courseID)
     {

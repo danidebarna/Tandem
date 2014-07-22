@@ -64,20 +64,21 @@ if(isIE11 || isie8Plus) isIEOk=true; else isIEOk=false;
 		var intTimerNow;
 		var limitTimer = 500;
 		var limitTimerConn = 1000;
+                
 		function setExpiredNow(itNow){
-			intTimerNow = setTimeout("getTimeNow("+itNow+");", 1000);
+                    intTimerNow = setTimeout("getTimeNow("+itNow+");", 1000);
 		}
 		function getTimeNow(itNow){
-			var tNow;
-			itNow--;
-			if(itNow<10) tNow ="0"+itNow;
-			else tNow = itNow;
-			$("#startNowBtn").html("00:"+tNow);
-			if(itNow<=1){ 
-				clearInterval(intTimerNow);
-				desconn();
-			}
-			else setExpiredNow(itNow);
+                    var tNow;
+                    itNow--;
+                    if(itNow<10) tNow ="0"+itNow;
+                    else tNow = itNow;
+                    $("#startNowBtn").html("00:"+tNow);
+                    if(itNow<=1){ 
+                            clearInterval(intTimerNow);
+                            desconn();
+                    }
+                    else setExpiredNow(itNow);
 		}
 //timer
 		var totalUser = 0;

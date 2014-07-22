@@ -127,10 +127,20 @@ if (!$user_obj || !$course_id) {
             <script type="text/javascript" src="js/jquery.infotip.min.js"></script>
             <script type="text/javascript" src="js/jquery.timeline-clock.min.js"></script>
             <script src="js/jquery.ui.progressbar.js"></script>
-            
+           
             <!-- Timer End -->
             
     <?php include_once dirname(__FILE__) . '/js/google_analytics.php' ?>
+            
+            
+            
+            <script>
+                $(document).ready(function() {
+                    StartTandemTimer();
+                });
+            </script>
+            
+            
             <script type="text/javascript">
                         (function($) {
                         $.widget("ui.combobox", {
@@ -377,179 +387,39 @@ if (!$user_obj || !$course_id) {
             $( "#user_selected" ).combobox();
             $( "#room" ).combobox();
             enable_button();
-    <?php /* if (!$is_host) {?>
-      $.colorbox.close = function(){};
-      $.colorbox({href:"waiting4user.php",escKey:false,overlayClose:false,width:300,height:180});
-      var interval = null;
-      checkExercise = function() {
-      if((xmlReq.readyState == 4) && (xmlReq.status == 200)){
-      //extract data
-      var cad=xmlReq.responseXML.getElementsByTagName('usuarios');
-      var exercise=cad[0].getAttribute("exercise")+"-";
-      if (exercise.length>0) {
-      $.colorbox.close();
-      if (interval!=null)
-      clearInterval(interval);
-      getXMLRoom(exercise);
-      }
-      }
-      }
-
-      <?php if (isset($user_obj->custom_room)) {?>
-      interval = setInterval(function(){
-      var url="check.php?room=<?php echo $user_obj->custom_room?>";
-      xmlReq.onreadystatechange = checkExercise;
-      if(!isIEOk){
-      xmlReq.timeout = 100000;
-      xmlReq.overrideMimeType("text/xml");
-      }
-      xmlReq.open("GET", url, true);
-      xmlReq.send(null);
-      },2000);
-      <?php } ?>
-      //interval2 = setInterval("fes",1500);
-      //checkExercise_interval();
-      //interval = setInterval("checkExercise_interval",3000);
-      <?php } */ ?>
-
-
-
-            intervalCheck = setInterval(function(){
-            $.ajax({
-            type: 'GET',
-            url: "new_tandems.php",
-            data: {
-            id: <?php echo $last_id; ?>
-            },
-            dataType: "xml",
-            success: function(xml){
-            var id_txt = $(xml).find('id').text();
-            if (id_txt && id_txt.length>0) {
-            var created_txt = $(xml).find('created').text();
-            var nameuser_txt = $(xml).find('nameuser').text();
-            var exercise_txt = $(xml).find('exercise').text();
-            $("#info-block").show();
-            $("#info-block").append("<div class='alert-inside'><i class='icon'></i><h3><?php echo $LanguageInstance->get('just_been_invited'); ?> <em>"+nameuser_txt+"</em> <?php echo $LanguageInstance->get('exercise'); ?>: <em>"+exercise_txt+"</em> </h3><a id='startNowBtn' href=\"accessTandem.php?id="+id_txt+"\" class='tandem-btn'><?php echo $LanguageInstance->get('accept'); ?></a></div>");
-            setExpiredNow(60);
-            clearInterval(intervalCheck);
             }
-            },
-            error: function(){
-            clearInterval(intervalCheck);
-            TimerSUAR+=500;
-            intervalCheck = setInterval(intervalCheck,TimerSUAR);
-            notifyTimerDown('<?php echo $LanguageInstance->get('SlowConn') ?>');
-            }
-            });
-            },TimerSUAR);
+        </script>
     <?php if ($selected_exercise && strlen($selected_exercise) > 0) {
         echo 'getXML();';
     } ?>
 
-
-            canviaAction = function(show) {
-            $('#main_form').attr('action', '');
-            $('#main_form').attr('target', '');
-            if (show=='show') {
-            $('#main_form').attr('action', 'statistics_tandem.php');
-            //$('#main_form').attr('target', 'statistics<?php echo rand(); ?>');
-            } else {
-            if (show=='exercises') {
-            $('#main_form').attr('action', 'manage_exercises_tandem.php');
-            //cmoyas
-            //$('#main_form').attr('target', 'exercises<?php echo rand(); ?>');
-            }
-            }
-            }
-            });
-
-            var intTimerNow;
-            var isNowOn=0;
-            function setExpiredNow(itNow){
-            isNowOn=1;
-            intTimerNow = setTimeout("getTimeNow("+itNow+");", 1000);
-            }
-            function getTimeNow(itNow){
-            var tNow;
-            itNow--;
-            if(itNow<10) tNow ="0"+itNow;
-            else tNow = itNow;
-            $("#startNowBtn").html("<?php echo $LanguageInstance->get('accept') ?> 00:"+tNow);
-            if(itNow<=1){
-            $("#startNowBtn").removeClass("tandem-btn").addClass("tandem-btnout");
-            $("#startNowBtn").html("<?php echo $LanguageInstance->get('caducado') ?>");
-            $("#startNowBtn").attr("href", "#");
-            window.location.href=window.location.href;
-            clearInterval(intTimerNow);
-            }
-            else setExpiredNow(itNow);
-            }
-            </script>
-            
             
             <script>
-            function crearHTML(objetojson){
-     
-                //suponiendo que lo que quieres ver es una tabla
-                var html = "";
-                 var titulostabla = "<tr><td>HORA DESDE</td><td>HORA LUNES</td><td>HORA MARTES</td><td>HORA MIERCOLES</td><td>HORA JUEVES</td><td>HORA VIERNES</td><td>HORA SABADO</td><td>HORA DOMINGO</td><td>TRASNOCHE</td></tr>";
-                var datos = "";
-                //recorremos el json
-
-                for(var i = 0; i < objetojson[0].Resultados.length;i++){
-
-                datos= datos+"<tr><td>"+objetojson[1].waiting[i].id_exercise+"</td><td>"+objetojson[1].waiting[i].number_user_waiting +"</td></tr>";
-                }
-
-                //unimos encabezados y datos
-
-                html = "<table>"+titulostabla+datos+"</table>";
-
-                return html;
-     
-            }
-            function recorrerArbol(json){
-                var type;
-                var resultado;
-                for (var i=0; i<json.length; i++){
-                    type = typeof json[i].hijos;
-
-                    if (type=="undefined"){
-                        resultado = true;
-                    }
-                    else{
-                        alert(json[i].id);
-                        resultado = recorrerArbol(json[i].hijos);
-                    }
-                }
-                return resultado;
-            }        
+            
+            function updateExercise(){
                 
+                $.ajax({
+                    data:{ 
+                            language: "<?php echo $lang = $_SESSION[LANG]; ?>", 
+                            courseID: "<?php echo $course_id; ?>" 
+                        },
+                    url: "updateRequestsWaitingTandemRoom.php",
+                    type: "POST",
+                    dataType: "json",
+                }).done(function(data){
+                    
+                });
+                
+            }
+            
+            
+            
             var interval = null;
             $(document).on('ready',function(){
-                interval = setInterval(updateDiv,1000);
+                interval = setInterval(updateDiv,500);
             });
             
-            function recorrerJSON(json) {
-                    var i = 0;
-                    for (var attr in json) {
-                         //console.log(attr);
-                         var attri = attr['success'];
-                         var evali=eval(attri);
-                         alert(attri);
-                         i++;
-                    }
-                    return "Hay "+ i + " atributos.";
-            }
-            
-            function setDataJSON(req)
-            {
-                var data = eval('(' + req.responseText + ')');
-                for (var i=0;i<data[0].index.length;i++)
-                {
-                        console.log(i);
-                }
-            }
+           
             function updateDiv(){
                 console.time( "Peticion AJAX" );
                 $.ajax({
@@ -587,65 +457,42 @@ if (!$user_obj || !$course_id) {
                         if(localLanguage != language){
                             //waiting
                             //alert('primera opcio');
-                            sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="submit" name="'+id_exercise+'" id="'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+'</label></li>';
+                            sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+'</label></li>';
                             
+                            //ajax 
+                            //mostrarem dades en un jquery dialog
                         }else{
                             //tandem
                             //alert('segona opcio');
-                            sumatorioTandem += '<li class="lineWT"><input class="exButtonTandem" type="submit" name="'+id_exercise+'" id="'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users tandem-users-more-one">'+number_user_waiting+'</label></li>';
+                            sumatorioTandem += '<li class="lineWT"><input class="exButtonTandem" type="button" name="exercise-'+id_exercise+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users tandem-users-more-one">'+number_user_waiting+'</label></li>';
                             
                         }
-                        
                         //alert(id_exercise+'-'+name+'-'+language+'-'+number_user_waiting);
                         
                     }
-                    
                     $('.tandem-room-left ul').html(sumatorioWaiting);
-                    
                     $('.tandem-room-right ul').html(sumatorioTandem);
                     
-                    
-                    sumatorioWaiting='';
-                    
-                    sumatorioTandem='';
-                    
-                    /*
-                     
-                    // Manera antiga de fer-ho ELIMINAR!!!!
-                    //Waiting Creation
-                    var sumatorioWaiting='';
-                    sumatorioWaiting += '<li class="lineWT title-waiting">WAITING</li>';
-                    
-                    
-                    for (var i in data['waiting']){
-                        var index1 = data['waiting'][i]['id_exercise'];
-                        var index2 = data['waiting'][i]['number_user_waiting'];
-                        if(index2==0){
-                            sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="submit" name="'+index1+'" value="Ejercicio '+index1+'"><label class="common-waiting-tandem_users waiting-users-zero">'+index2+'</label></li>'; 
-                        }else{
-                            sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="submit" name="'+index1+'" value="Ejercicio '+index1+'"><label class="common-waiting-tandem_users waiting-users-more-one">'+index2+'</label></li>';
-                        //$('.tandem-room-left ul').append('<li class="lineWT"><input class="exButtonWaiting" type="submit" name="'+index1+'" value="Ejercicio '+index1+'"><label class="common-waiting-tandem_users waiting-users-more-one">'+index2+'</label></li>');
-                        //alert(index1+'-'+index2);
-                        }
-                    }
-                    
-                    $('.tandem-room-left ul').html(sumatorioWaiting);
-                    sumatorioWaiting='';
-                    
-                    //Tandem Creation
-                    var sumatorioTandem='';
-                    sumatorioTandem += '<li class="lineWT title-tandem">TANDEM</li>';
-                    
-                    for (var i in data['tandem']){
-                        var index1 = data['tandem'][i]['id_exercise'];
-                        var index2 = data['tandem'][i]['number_user_waiting'];
+                    for (var i in data){
                         
-                        sumatorioTandem += '<li class="lineWT"><input class="exButtonTandem" type="submit" name="'+index1+'" value="Ejercicio '+index1+'"><label class="common-waiting-tandem_users tandem-users-more-one">'+index2+'</label></li>';
-                        //alert(index1+'-'+index2);
+                        var id_exercise = data[i]['id_exercise'];
+                        
+                        //si aquest boto es clickat passem id,language,id_user,num_usuaris_en_espera
+                        
+                        $(document).ready(function(){
+                            $('#exercise-'+id_exercise).on("click",function(){
+                                //alert('Hemos seleccionado el ejercicio: '+this.id);
+                                timeStop();
+                                startTask();
+                                //updateExercise();
+                            });
+                        }); 
+                        
                     }
-                    $('.tandem-room-right ul').html(sumatorioTandem);
+                    
+                    sumatorioWaiting='';
                     sumatorioTandem='';
-                    */
+                    
                 });
             }
             </script>
@@ -655,7 +502,7 @@ if (!$user_obj || !$course_id) {
 		var limitTimer = 500;
 		var limitTimerConn = 1000;
 		function setExpiredNow(itNow){
-			intTimerNow = setTimeout("getTimeNow("+itNow+");", 1000);
+			intTimerNow = setTimeout("getTimeNow("+itNow+");", 3000);
 		}
 		function getTimeNow(itNow){
 			var tNow;
@@ -670,16 +517,23 @@ if (!$user_obj || !$course_id) {
 			else setExpiredNow(itNow);
 		}
                 
-			StartTandemTimer = function(){
-				/*$("#lnk-start-task").addClass("btnOff");
-				$("#lnk-start-task").html("Waiting...");
-				$("#lnk-start-task").removeAttr("href");
-				$("#lnk-start-task").removeAttr("onclick");*/
-                                $("#timeline").show("fast");
-                                var minutos = 5;
-                                var segundos = 0;
-                                timerOn(minutos,segundos);
-         		}
+                StartTandemTimer = function(){
+                        /*$("#lnk-start-task").addClass("btnOff");
+                        $("#lnk-start-task").html("Waiting...");
+                        $("#lnk-start-task").removeAttr("href");
+                        $("#lnk-start-task").removeAttr("onclick");*/
+                        $("#timeline").show("fast");
+                        var minutos = 0;
+                        var segundos = 30;
+                        timerOn(minutos,segundos);
+                        timeline.start();
+                       
+                      
+                        //intervalTimerAction = setInterval(timerChecker,1000);
+                        
+                        
+                        
+                }
                         
                         
                 var totalUser = 0;
@@ -713,6 +567,7 @@ if (!$user_obj || !$course_id) {
 	var timeline;
 	timerOn = function(minutos,segundos){
 		// Configuración timeline
+               
 		timeline = $('#timeline').timeLineClock({
 			time: {hh:0,mm:parseInt(minutos),ss:parseInt(segundos)},
 			onEnd: theEnd
@@ -729,11 +584,35 @@ if (!$user_obj || !$course_id) {
 	// ventana modal tiempo agotado
 	function theEnd(){
 		if ($("#modal-end-task").length > 0){
-			$.modal( $('#modal-end-task') );
+			$.modal($('#modal-end-task'));
 			//accionTimer();
 		}
 	}
+        
+        function startTask(){
+            if ($("#modal-start-task").length > 0){
+                $('#modal-start-task').modal( {onClose: function () {
+                   beginningOneMoreTime();
+                    $.modal.close(); // must call this!
+                }})
+                
+            }
+        }
+        
+         
+        function timeStop(){
+		 timeline.stop();
+	}
+        
+        function beginningOneMoreTime(){
+                timeline.start();
+        }
+        
+        
+         
             </script>
+           
+           
             
         </head>
         <body>
@@ -776,8 +655,36 @@ if (!$user_obj || !$course_id) {
                                     <div class="linewrap"><div class="line"></div></div>
                             </div>
                            
-                            
+                            <!--
                             <p><a href='#' onclick="StartTandemTimer();return false;" id="lnk-start-task" class="btn">Empezamos con las pruebas del Timer</a></p>
+                            -->
+                            <div id="modal-start-task" class="modal">
+                                <script>
+                                         
+                                </script>
+                                <body id="home_" style="background-color:#FFFFFF;">
+                                <div>
+                                        <img id="home" src="images/final1.png" width="310" height="85" alt="" />
+                                </div>
+                                <div class="text">
+                                        <!-- Falten introduir al PO -->
+                                        <p><?php echo $LanguageInstance->get('Waiting for Tandem Connexion !!');?></p>
+                                        <p><?php echo $LanguageInstance->get('Please Stand By !!');?></p>
+                                </div>
+                                <div class="waitingImagePosition">
+                                  <img id="home" src="css/images/loading_1.gif" width="150" height="150" alt="" />
+                                </div>
+                            </body>
+                            </div>
+                            
+                            
+                            
+                            <div id="modal-end-task" class="modal">
+                                <p class="msg">Time up!</p>
+                                <p><a href='#' id="lnk-end-task" class="btn simplemodal-close">Close</a></p>
+                            </div>
+                            
+                            
                             
                             <div class="tandem-room-content">
                                 <div class="tandem-room-left">
@@ -790,8 +697,12 @@ if (!$user_obj || !$course_id) {
                             </div>
                             <div class="cleaner"></div> 
                             
-                            
-                            
+                            <!--
+                            <div id="simplemodal-container" class="modal">
+                                Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32. 
+                                <div class="positionCharge"><img src="css/images/loading_1.gif" alt=""/></div>
+                            </div>
+                            -->
                                 <?php
                                 echo '<div>Lenguaje de la sesion: ' . $lang = $_SESSION[LANG] . '</div>' . '<br>';
                                 echo 'ID del Curso: ' . $course_id . '<br>';
