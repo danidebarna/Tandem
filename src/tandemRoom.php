@@ -242,6 +242,7 @@ if (!$user_obj || !$course_id) {
                                 //alert('Hemos seleccionado el ejercicio: '+$(this).data("id-exercise"));
                                 timeStop(); //Stopping the timebar
                                 startTask(); //We show the connexion div with the charging image
+                                alert($(this).data("id-exercise"));
                                 getWaitingTandemRoom($(this).data("id-exercise")); //Passamos por ajax el id del ejercicio a la base de datos 
                             });
                         }); 
@@ -281,8 +282,8 @@ if (!$user_obj || !$course_id) {
                         $("#lnk-start-task").removeAttr("href");
                         $("#lnk-start-task").removeAttr("onclick");*/
                         $("#timeline").show("fast");
-                        var minutos = 1;
-                        var segundos = 30;
+                        var minutos = 3;
+                        var segundos = 0;
                         timerOn(minutos,segundos);
                         timeline.start();
                        

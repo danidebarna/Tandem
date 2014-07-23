@@ -1388,24 +1388,18 @@ class GestorBD {
      * @param type $courseID
      * @param type $exerciseID
      */
-    public function offer_exercise($language, $courseID, $exerciseID){
-        
+    public function offer_exercise($language, $courseID, $exerciseID)
+    {
         $ok = false;
 
         $sqlSelect = 'select number_user_waiting from waiting_room where id_course = '.$courseID.' and id_exercise = ' . $exerciseID;
         $resultSelect = $this->consulta($sqlSelect);
         
-       
-        
         if ($this->numResultats($resultSelect) > 0){
-            $array = array();
-            $row = $this->obteComArray($resultSelect);
-            foreach ($row as  $key => $value) {
-                $value = array_shift($value);
-            }
-            $value = $value + 1 ;
-            $ok = $this->consulta("UPDATE waiting_room SET number_user_waiting = number_user_waiting + 1  WHERE id_course = '.$courseID.' and id_exercise = " .$exerciseID);
-            $ok .= ' EXECUTING UPDATE CourseID = '.$courseID.' ExerciseID ='.$exerciseID.' waiting room users = '.$value;
+            
+            $sqlPrueba = "UPDATE waiting_room SET number_user_waiting = number_user_waiting + 1  WHERE id_course = ".$courseID." and id_exercise = ".$exerciseID;
+            $ok = $this->consulta($sqlPrueba);
+            //$ok .= ' EXECUTING UPDATE CourseID = '.$courseID.' ExerciseID ='.$exerciseID.' waiting room users = '.$value;
             
         }else{
             $sqlInsert = 'INSERT INTO waiting_room (language, id_course, id_exercise,number_user_waiting,created) VALUES (' . $this->escapeString($language) . ',' . $courseID . ',' . $exerciseID . ',1,now())';
@@ -1415,6 +1409,30 @@ class GestorBD {
         return $ok;
     }
 
+    public function tandem_exercise($language, $courseID, $exerciseID)
+    {
+        $ok = false;
+
+        $sqlSelect = 'select number_user_waiting from waiting_room where id_course = '.$courseID.' and id_exercise = ' . $exerciseID;
+        $resultSelect = $this->consulta($sqlSelect);
+        
+        if ($this->numResultats($resultSelect) > 0){
+            
+            $sqlPrueba = "UPDATE waiting_room SET number_user_waiting = number_user_waiting - 1  WHERE id_course = ".$courseID." and id_exercise = ".$exerciseID;
+            $ok = $this->consulta($sqlPrueba);
+            
+        }else{
+           
+            //Pensem***********
+            
+        }
+        return $ok;
+        
+        
+    }
+    
+    
+    
     /**
      *
      * @param type $language
@@ -1449,6 +1467,8 @@ class GestorBD {
         
         if (!$tandem_waiting_room){
             $ok  = $this->offer_exercise($language, $idCourse, $idExercise);
+        }else{
+            $ok = $this->tandem_exercise($language, $idCourse, $idExercise);
         }
         return $ok;
     
