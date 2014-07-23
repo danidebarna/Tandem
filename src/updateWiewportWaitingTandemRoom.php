@@ -20,7 +20,7 @@ if(isset($_POST['courseID'])){
 
 $oWiewport = new GestorBD();
 
-
+/*
 $aWaiting=$oWiewport->updateWaiting($language, $courseID);
 
 
@@ -31,12 +31,12 @@ $mWT = array('waiting'=>$aWaiting,'tandem'=>$aTandem);
 
 
 $oJson=json_encode($mWT,JSON_FORCE_OBJECT);
-
+*/
 
 //echo $oJson;
 
 
-$uniqueArray = $oWiewport->upDateWaitingTandemRoom($courseID);
+$uniqueArray = $oWiewport->getWaitingTandemRoom($courseID);
 
 
 $oJsonUnique = json_encode($uniqueArray,JSON_FORCE_OBJECT);

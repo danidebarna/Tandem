@@ -141,282 +141,40 @@ if (!$user_obj || !$course_id) {
             </script>
             
             
-            <script type="text/javascript">
-                        (function($) {
-                        $.widget("ui.combobox", {
-                        _create: function() {
-                        var input,
-                                self = this,
-                                select = this.element.hide(),
-                                selected = select.children(":selected"),
-                                value = selected.val() ? selected.text() : "",
-                                wrapper = $("<span>")
-                                .addClass("ui-combobox")
-                                .insertAfter(select);
-                                input = $("<input>")
-                                .appendTo(wrapper)
-                                .val(value)
-                                .addClass("ui-state-default")
-                                .autocomplete({
-                                delay: 0,
-                                        minLength: 0,
-                                        source: function(request, response) {
-                                        var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
-                                                response(select.children("option").map(function() {
-                                                var text = $(this).text();
-                                                        if (this.value && (!request.term || matcher.test(text)))
-                                                        return {
-                                                        label: text.replace(
-                                                                new RegExp(
-                                                                        "(?![^&;]+;)(?!<[^<>]*)(" +
-                                                                        $.ui.autocomplete.escapeRegex(request.term) +
-                                                                        ")(?![^<>]*>)(?![^&;]+;)", "gi"
-                                                                        ), "<strong>$1</strong>"),
-                                                                value: text,
-                                                                option: this
-                                                                };
-                                                        }));
-                                                },
-                                        select: function(event, ui) {
-                                        ui.item.option.selected = true;
-                                                self._trigger("selected", event, {
-                                                item: ui.item.option
-                                                        });
-                                                },
-                                        change: function(event, ui) {
-                                        if (!ui.item) {
-                                        input.val($(select).find("option:selected").text());
-                                                var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex($(this).val()) + "$", "i"),
-                                                valid = false;
-                                                select.children("option").each(function() {
-                                        if ($(this).text().match(matcher)) {
-                                this.selected = valid = true;
-                                        return false;
-                                        }
-                                        });
-                                        if (!valid) {
-                                        // remove invalidvalue, as itdidn't match anything
-                                        $(this).val("");
-                                        select.val("");
-                                                input.data("autocomplete").term ="";
-                                                return false;
-                                                }
-                                                       }
-                                      }
-                                                       })
-                                                               .addClass("ui-widget ui-widget-content");
-                                                                        // MODIFICATION - bind to the input's focus
-                                                                                input.focus(function(event) {
-                                                                                event.preventDefault();
-                                                                                $(this).val('');
-                                                $(input).autocomplete('search', '');
-                                                }); //Aquesta linia es pq seleccioni                     input.val($(select).find("option:selected").text());
-                                                        input.data("autocomplete")._renderItem = function(ul, item) {            return $("<li></li>")
-                                                .data("item.autocomplete", item)                     .append("<a>" + item.label + "</a>")
-                                                .appendTo(ul);                    };
-                                                $("<a>")
-                                                      .attr("tabIndex", - 1)
-                                                        .attr("title", "Show All Items")
-                                                        .appendTo(wrapper)
-                                                        .button({
-                                       icons: {
-                               primary: "ui-icon-triangle-1-s"
-                                        },
-                                                text: false
-                                                })
-                                                .removeClass("ui-corner-all")
-                                       .addClass(" ui-button-icon")
-                                        .click(function() {
-            // close if already visible
-                                        if (input.autocomplete("widget").is(":visible")){
-                                        input.autocomplete("close");
-                                        return;
-                                       }
-
-                                        // work around a bug (likely same cause as #5265)
-                                        $(this).blur();
-                                        // pass empty string as value to search for, displaying all results
-                                        input.autocomplete("search", "");
-                                      input.focus();
-                                        });
-                                                },
-                                destroy: function() {
-                                      this.wrapper.remove();
-                                        this.element.show();
-                                        $.Widget.prototype.destroy.call(this);
-                                        }
-                                                });
-                                                })(jQuery);
-                                        $(document).ready(function(){
-
-                                $('#showNewsS').slideUp();
-                        //IE DETECTION - ERROR MSG TO USER
-                                var isIE11 = !!navigator.userAgent.match(/Trident\/7\./); //check compatibility with iE11 (user agent has changed within this version)
-                                var isie8PlusF = (function(){var undef, v =  3, div  = document.createElement('div'), all = div.getElementsByTagName('i'); while  (div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->', all[0]); return v > 4 ? v : undef; }()); if (isie8PlusF >= 8) isie8Plus = true; else isie8Plus = false;
-                                                    if (isIE11 || isie8Plus) isIEOk = true; else isIEOk = false;
-                                                    if (isie8PlusF < 8) $.colorbox({href:"warningIE.html", escKey:true, overlayClose:false, width:400, height:350, onLoad:function(){$('#cboxClose').hide(); }});
-            // END
-
-            //xml request for iexploiter11+/others
-                                                    if (isIEOk || window.ActiveXObject) xmlReq = new ActiveXObject("Microsoft.XMLHTTP");
-                                                    else xmlReq = new XMLHttpRequest();
-            //global vars - will be extracted from dataROOM.xml
-                                                    var classOf = "";
-                                                    var numBtns = "";
-                                                    var numUsers = "";
-                                                    var nextSample = "";
-                                                    var node = "";
-                                                    var room = "";
-                                                    var data = "";
-                                                    var TimerSUAR = 2000;
-                                                    var txtNews = "";
-                                                    notifyTimerDown = function(id){
-                                                    if ($.trim(txtNews) != $.trim(id)){
-                                                    $('#showNewsS').html(id);
-                                                            $('#showNewsS').css("top", - 20).fadeIn(1000).slideDown("fast");
-                                                            $('#showNewsS').css("top", - 20).fadeIn(1000).slideDown("fast");
-                                                            $("#showNewsS").css("top", - 50).delay(3000).fadeOut(1000).slideUp("fast");
-                                                            txtNews = id;
-                                                            }
-                                                    }
-
-                                            enable_exercise = function(value){
-                                            value = parseInt(value, 10);
-                                                    if (value != '' && value > 0) {
-                                            $('#room').removeAttr('disabled');
-                                                    $("#room").combobox();
-                                                    }
-                                            else {
-                                            $("#room").destroy();
-                                                    $('#room').attr('disabled', 'disabled');
-                                                    }
-                                            }
-                                            enable_button = function(value){
-                                            if (value != '')
-                                                    $('#start').removeAttr('disabled');
-                                                    else
-            //$('#start').addClass('disabled');
-                                                    $('#start').hide();
-                                                    }
-                                            putLink = function(){
-                                            getXML();
-                                                    return false;
-                                                    }
-            //opens next exercise
-                                            openLink = function(value, nextExer){
-                                            top.document.location.href = classOf + ".php?room=" + value + "&user=a&nextSample=" + nextSample + '&node=' + node + '&data=' + data;
-                                                    }
-                                            getXMLRoom = function(room){
-                                            var room_2 = room.split("-");
-                                                    room = room.split("_");
-                                                    data = room[0].split("speakApps");
-                                                    data = data[0].split("-");
-                                                    data = data[0]; //.toUpperCase();
-                                                    var extra_path = '';
-                                                    if (data.indexOf("/") >= 0) {
-                                            data = data.split("/");
-                                                    data.indexOf("/");
-                                                    extra_path = data[0] + "/";
-                                                    data = data[1];
-                                                    }
-
-                                            room = room_2[1];
-                                                    var url = "<?php echo $path; ?>" + extra_path + "data" + data + ".xml";
-                                                    xmlReq.onreadystatechange = processXml;
-                                                    if (!isIEOk){
-                                            xmlReq.timeout = 100000;
-                                                    xmlReq.overrideMimeType("text/xml");
-                                                    }
-                                            xmlReq.open("GET", url, true);
-                                                    xmlReq.send(null);
-                                                    }
-                                            printError = function(error){
-                                            $('#roomStatus').val(error);
-                                                    }
-            //get dataROOM.xml params
-                                            getXML = function(){
-                                            user_selected = $('#user_selected').val();
-                                                    room_temp = $('#room').val();
-                                                    if (user_selected == "" || user_selected == "-1") {
-                                            alert("<?php echo $LanguageInstance->get('select_user') ?>");
-                                                    } else {
-                                            if (room_temp == "" || room_temp == "-1") {
-                                            alert("<?php echo $LanguageInstance->get('select_exercise') ?>");
-                                                    } else {
-                                            enable_button('');
-                                                    getXMLRoom(room_temp);
-                                                    }
-                                            }
-                                            }
-                                            processXml = function(){
-                                            if ((xmlReq.readyState == 4) && (xmlReq.status == 200)){
-            //extract data
-                                            if (xmlReq.responseXML != null) {
-                                            var cad = xmlReq.responseXML.getElementsByTagName('nextType');
-                                                    classOf = cad[0].getAttribute("classOf");
-                                                    numBtns = cad[0].getAttribute("numBtns");
-                                                    numUsers = cad[0].getAttribute("numUsers");
-            nextSample=cad[0].getAttribute("currSample");
-            node=parseInt(cad[0].getAttribute("node"))+1;
-            user_selected=$('#user_selected').val();
-            document.getElementById('roomStatus').innerHTML="";
-            $('#idfrm').attr('src','checkRoomUserTandem.php?id_user_guest='+user_selected+'&nextSample='+nextSample+'&node='+node+'&classOf='+classOf+'&data='+data);
-            } else {
-            $('#roomStatus').html('Error loading exercise '+data+' contact with the administrators');
-            }
-            } else if ((xmlReq.readyState == 4) && (xmlReq.status == 404)) {
-            $('#roomStatus').html('Exercise '+data+' does not exist');
-            }
-            }
-            createRoom = function(room, data, nextSample, node, classOf){
-            //extract data
-            var cad=xmlReq.responseXML.getElementsByTagName('nextType');
-            classOf=cad[0].getAttribute("classOf");
-            numBtns=cad[0].getAttribute("numBtns");
-            numUsers=cad[0].getAttribute("numUsers");
-            nextSample=cad[0].getAttribute("currSample");
-            node=parseInt(cad[0].getAttribute("node"))+1;
-            user_selected=$('#user_selected').val();
-            document.getElementById('roomStatus').innerHTML="";
-            $('#idfrm').attr('src','checkRoomUserTandem.php?id_user_guest='+user_selected+'&create_room=1&nextSample='+nextSample+'&node='+node+'&classOf='+classOf+'&data='+data);
-            //TODO in Ajax
-            }
-            printError = function (error) {
-            alert(error);
-            }
-            $( "#user_selected" ).combobox();
-            $( "#room" ).combobox();
-            enable_button();
-            }
-        </script>
+            
     <?php if ($selected_exercise && strlen($selected_exercise) > 0) {
         echo 'getXML();';
     } ?>
 
             
             <script>
-            
-            function updateExercise(){
+            //$language, $courseID, $idExercise, $idNumberUserWaiting, $idUser);
+            // echo '<div>' . $lang = $_SESSION[LANG] . '</div>';
+              //                          echo $course_id;
+              //                          echo $user_obj->id;
+            function getWaitingTandemRoom(exercise_id){
                 
                 $.ajax({
                     data:{ 
-                            language: "<?php echo $lang = $_SESSION[LANG]; ?>", 
-                            courseID: "<?php echo $course_id; ?>" 
+                            'language': "<?php echo $_SESSION[LANG]; ?>", 
+                            'tandem_language' : "<?php echo $_GET['localLanguage']; ?>",
+                            'courseID': "<?php echo $course_id; ?>", 
+                            'exerciseID': exercise_id,
+                            'userID':  "<?php echo $user_obj->id; ?>"
                         },
-                    url: "updateRequestsWaitingTandemRoom.php",
+                    url: "getRequestsWaitingTandemRoom.php",
                     type: "POST",
                     dataType: "json",
                 }).done(function(data){
-                    
-                });
-                
+                    console.log(data);
+                }); 
             }
             
             
             
             var interval = null;
             $(document).on('ready',function(){
-                interval = setInterval(updateDiv,500);
+                interval = setInterval(updateDiv,2000);
             });
             
            
@@ -457,14 +215,14 @@ if (!$user_obj || !$course_id) {
                         if(localLanguage != language){
                             //waiting
                             //alert('primera opcio');
-                            sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+'</label></li>';
+                            sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-exercise="'+id_exercise+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-more-one">WaitUsers='+number_user_waiting+ ' IDExerc='+id_exercise+'</label></li>';
                             
                             //ajax 
                             //mostrarem dades en un jquery dialog
                         }else{
                             //tandem
                             //alert('segona opcio');
-                            sumatorioTandem += '<li class="lineWT"><input class="exButtonTandem" type="button" name="exercise-'+id_exercise+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users tandem-users-more-one">'+number_user_waiting+'</label></li>';
+                            sumatorioTandem += '<li class="lineWT"><input class="exButtonTandem" type="button" name="exercise-'+id_exercise+'" id="exercise-'+id_exercise+'" data-id-exercise="'+id_exercise+'"  value="'+name+'"><label class="common-waiting-tandem_users tandem-users-more-one">WaitUsers='+number_user_waiting+ ' IDExerc='+id_exercise+'</label></li>';
                             
                         }
                         //alert(id_exercise+'-'+name+'-'+language+'-'+number_user_waiting);
@@ -481,10 +239,10 @@ if (!$user_obj || !$course_id) {
                         
                         $(document).ready(function(){
                             $('#exercise-'+id_exercise).on("click",function(){
-                                //alert('Hemos seleccionado el ejercicio: '+this.id);
-                                timeStop();
-                                startTask();
-                                //updateExercise();
+                                //alert('Hemos seleccionado el ejercicio: '+$(this).data("id-exercise"));
+                                timeStop(); //Stopping the timebar
+                                startTask(); //We show the connexion div with the charging image
+                                getWaitingTandemRoom($(this).data("id-exercise")); //Passamos por ajax el id del ejercicio a la base de datos 
                             });
                         }); 
                         
@@ -502,7 +260,7 @@ if (!$user_obj || !$course_id) {
 		var limitTimer = 500;
 		var limitTimerConn = 1000;
 		function setExpiredNow(itNow){
-			intTimerNow = setTimeout("getTimeNow("+itNow+");", 3000);
+			intTimerNow = setTimeout("getTimeNow("+itNow+");", 10000);
 		}
 		function getTimeNow(itNow){
 			var tNow;
@@ -523,7 +281,7 @@ if (!$user_obj || !$course_id) {
                         $("#lnk-start-task").removeAttr("href");
                         $("#lnk-start-task").removeAttr("onclick");*/
                         $("#timeline").show("fast");
-                        var minutos = 0;
+                        var minutos = 1;
                         var segundos = 30;
                         timerOn(minutos,segundos);
                         timeline.start();
