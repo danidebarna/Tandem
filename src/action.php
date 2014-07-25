@@ -7,7 +7,7 @@ function findAttribute($object, $attribute) {
 }
 
 function editXMLConfirm($room,$user,$number,$nextSample){  
-	$xml = simplexml_load_file(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$room.".xml");
+	$xml = simplexml_load_file(PROTECTED_FOLDER.'/'.$room.".xml");
 	$number = (int) $number;
 	//No encuentra ese action
 	if (!$xml) {
@@ -31,12 +31,12 @@ function editXMLConfirm($room,$user,$number,$nextSample){
 			//encuentra y no existe confirmacion primer usuario
 		}else $xml->actions[$nextSample]->action[$number]->addAttribute('firstUser',$user);
 	}
-  	$xml->asXML(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$room.".xml");
+  	$xml->asXML(PROTECTED_FOLDER.'/'.$room.".xml");
 }
 
 
 function preTimer($room,$user,$nextSample){
-	$xml = simplexml_load_file(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$room.".xml");
+	$xml = simplexml_load_file(PROTECTED_FOLDER.'/'.$room.".xml");
 	$number=0;
 	if($xml->actions[$nextSample]==null){
 		$xml->addChild('actions');
@@ -49,20 +49,20 @@ function preTimer($room,$user,$nextSample){
 			$xml->actions[$nextSample]->addAttribute('secondUser',$user);
 		}
 	}
-  	$xml->asXML(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$room.".xml");	
+  	$xml->asXML(PROTECTED_FOLDER.'/'.$room.".xml");	
 }
 
 function editShowNextQuestion($room,$user,$nextSample){
-	$xml = simplexml_load_file(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$room.".xml");
+	$xml = simplexml_load_file(PROTECTED_FOLDER.'/'.$room.".xml");
 	if(findAttribute($xml->actions[$nextSample],firstUserEnd))
 			$xml->actions[$nextSample]->addAttribute('secondUserEnd',$user);
 	else 
 			$xml->actions[$nextSample]->addAttribute('firstUserEnd',$user);
-	$xml->asXML(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$room.".xml");	
+	$xml->asXML(PROTECTED_FOLDER.'/'.$room.".xml");	
 }
 
 function editXMLMap($room,$user,$number,$nextSample) {
-	$xml = simplexml_load_file(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$room.".xml");
+	$xml = simplexml_load_file(PROTECTED_FOLDER.'/'.$room.".xml");
 	$number = (int) $number;
 		if($xml->actions[$nextSample]->action[0]==null){ 
 			$xml->addChild('actions');
@@ -80,7 +80,7 @@ function editXMLMap($room,$user,$number,$nextSample) {
 			$action->addAttribute('secondUser',$user);
 		}else $action->addAttribute('firstUser',$user); 
 		
-		$xml->asXML(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$room.".xml");
+		$xml->asXML(PROTECTED_FOLDER.'/'.$room.".xml");
 }
 
 
@@ -95,7 +95,7 @@ $nextSample = $_GET["nextSample"]-1;
 $numBtn = isset($_GET["numBtn"])?$_GET["numBtn"]:0;
 
 if($_GET["user"]!="" && $_GET["room"]!=""){
-	if(is_file(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$_GET["room"].".xml")) {
+	if(is_file(PROTECTED_FOLDER.'/'.$_GET["room"].".xml")) {
 		switch($_GET["tipo"]){
 			case 'confirm': editXMLConfirm($_GET["room"],$_GET["user"],$_GET["number"],$nextSample,"");break;
 			

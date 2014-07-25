@@ -81,7 +81,7 @@ if (!isset($user_obj) && isset($exercise) && strlen($exercise)>0) {
 			$exercise = $data.$id_resource.$room;
 			$redirect_to_room = false;
 			$user_obj->type_user = 'b';
-			if(!is_file(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$exercise.".xml")) { 
+			if(!is_file(PROTECTED_FOLDER.'/'.$exercise.".xml")) { 
 				$create_room = isset($_REQUEST['create_room'])?$_REQUEST['create_room']:false;
 				if ($create_room=='1') {
 					$user_obj->type_user = 'a'; $tandemBLTI->makeXMLUser($user_obj,$exercise,$data);

@@ -24,8 +24,8 @@ if (!$user_obj || !$course_id) {
 	$room = $_REQUEST['room'];
 	header ("content-type: text/xml");
 	$xml = '';
-	if (file_exists(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$room.'.xml')) {
-		$xml = file_get_contents(PROTECTED_FOLDER.DIRECTORY_SEPARATOR.$room.'.xml');
+	if (file_exists(PROTECTED_FOLDER.'/'.$room.'.xml')) {
+		$xml = file_get_contents(PROTECTED_FOLDER.'/'.$room.'.xml');
 	} else {
 		error_log("Could not find file $room.xml", 0);	
 	}

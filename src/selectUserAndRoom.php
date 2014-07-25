@@ -2,6 +2,7 @@
 require_once dirname(__FILE__).'/classes/lang.php';
 require_once dirname(__FILE__).'/classes/constants.php';
 require_once dirname(__FILE__).'/classes/gestorBD.php';
+require_once dirname(__FILE__).'/classes/utils.php';
 
 require_once 'IMSBasicLTI/uoc-blti/lti_utils.php';
 
@@ -13,8 +14,6 @@ $use_waiting_room = isset($_SESSION[USE_WAITING_ROOM])?$_SESSION[USE_WAITING_ROO
 
 require_once dirname(__FILE__).'/classes/IntegrationTandemBLTI.php';
 
-require_once dirname(__FILE__).'/classes/manager_waiting_room.php';
-
 
 if (!$user_obj || !$course_id) {
 	//Tornem a l'index
@@ -23,15 +22,15 @@ if (!$user_obj || !$course_id) {
 	require_once(dirname(__FILE__).'/classes/constants.php');
 	$path = '';
 	if (isset($_SESSION[TANDEM_COURSE_FOLDER])) $path = $_SESSION[TANDEM_COURSE_FOLDER].'/';
-	
+
 	$id_resource_lti = $_SESSION[ID_RESOURCE];
-	
+
 	$lti_context = unserialize($_SESSION[LTI_CONTEXT]);
-	
+
 	$gestorBD = new GestorBD();
 	$users_course = $gestorBD->obte_llistat_usuaris($course_id, $user_obj->id);
 	$is_reload = isset($_POST['reload'])?$_POST['reload']!=null:false;
-	
+
 	if ($is_reload || !$users_course || count($users_course)==0) {
 		if ($lti_context->hasMembershipsService()) { //Carreguem per LTI
 			//Convertir el llistat d'usuaris a un array de 
@@ -41,15 +40,17 @@ if (!$user_obj || !$course_id) {
 			//person_contact_email_primary
 			//roles: separats per comes
 			//lis_result_sourcedid
-			$users_course_lti = $lti_context->doMembershipsService(array()); //$users_course no ho passem per evitar problemes ja que el continguts son array i no un obj LTI
+                    	$users_course_lti = $lti_context->doMembershipsService(array()); //$users_course no ho passem per evitar problemes ja que el continguts son array i no un obj LTI
 			$users_course = array();
 			foreach ($users_course_lti as $user_lti) {
-				$id_user_lti = $user_lti->getId();
-				$firstname = mb_convert_encoding($user_lti->firstname, 'ISO-8859-1', 'UTF-8');
-				$lastname = mb_convert_encoding($user_lti->lastname, 'ISO-8859-1', 'UTF-8');
-				$fullname = mb_convert_encoding($user_lti->fullname, 'ISO-8859-1', 'UTF-8');
-				$email = mb_convert_encoding($user_lti->email, 'ISO-8859-1', 'UTF-8');
-									
+				$id_user_lti = $user_lti->getId(  );
+                                $id_user_lti = str_replace(":", "_", $id_user_lti);
+                                
+				$firstname = convertToUtf8($user_lti->firstname);
+				$lastname = convertToUtf8($user_lti->lastname);
+				$fullname = convertToUtf8($user_lti->fullname);
+				$email = convertToUtf8($user_lti->email);
+
 				$gestorBD->afegeixUsuari($course_id, $id_user_lti, $firstname, $lastname, $fullname, $email, '');
 				//$users_course[$id_user_lti] = $gestorBD->get_user_by_username($id_user_lti);
 			}
@@ -64,7 +65,7 @@ if (!$user_obj || !$course_id) {
 			require_once dirname(__FILE__).'/classes/gestorOKI.php';
 			$gestorOKI	= new GestorOKI();
 			$users_course = $gestorOKI->obte_llistat_usuaris($gestorBD, $course_id);
-			
+
 		}
 	}
 	$is_showTandem = isset($_POST['showTandem'])?$_POST['showTandem']!=null:false;
@@ -74,13 +75,13 @@ if (!$user_obj || !$course_id) {
 		$exercise  = isset($_POST['room'])?intval($_POST['room'],10):false;
 		$user_tandems = $gestorBD->obte_llistat_tandems($course_id, $user_selected, $exercise);
 	}
-	
-	
-	
-	
+
+
+
+
 	//Permetem que seleccini l'exercici 20111110
 	$is_host = $user_obj->is_host;
-	
+
 	$array_exercises = $gestorBD->get_tandem_exercises($course_id);
 	$tandemBLTI = new IntegrationTandemBLTI();
 	$selected_exercise = $tandemBLTI->checkXML2GetExercise($user_obj);
@@ -91,7 +92,7 @@ if (!$user_obj || !$course_id) {
 
 	//Agafem les dades de l'usuari
 	$name = mb_convert_encoding($user_obj->name, 'UTF-8', 'UTF-8');
-	
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -518,7 +519,7 @@ if (!$user_obj || !$course_id) {
 				<div id="content">
 					<span class="welcome"><?php echo $LanguageInstance->get('welcome')?> <?php echo $name ?>!</span><br/>
 					<form action="#" method="post" id="main_form" class="login_form">
-                                            
+					    
                                          <?php     
                                            
                                            
@@ -555,47 +556,11 @@ if (!$user_obj || !$course_id) {
                                                        
 								</fieldset>
                                                                 <?php } else { 
-                                                                    /*********************************/
+                                                                   
                                                                 
+                                                               }
                                                         
-                                                        echo '<h1>DENTRO!!!!</h1>';
-                                                        
-                                                        echo '<div>'.$lang = $_SESSION[LANG].'</div>';
-                                                        echo $course_id;
-                                                        echo $user_obj->id;
-                                                        
-                                                        $oManagerWaitingRoom = new ManagerWaitingRoom();
-                                                         
-                                                        $idExercise = isset($_GET['id_exercise']) ? $_GET['id_exercise'] : '';
-
-
-                                                        $insert = isset($_GET['insert']) ? $_GET['insert'] : '';
-                                                        if($insert&&$idExercise){
-                                                            $insertParams=$oManagerWaitingRoom->insertUserAndRoom($_SESSION[LANG],$course_id,$idExercise,$use_waiting_room,$user_obj->id);
-                                                        }
-
-                                                        $something1 = $oManagerWaitingRoom->check_offered_exercises($_SESSION[LANG], $course_id);
-
-                                                        var_dump($something1);
-                                                        
-                                                        $something2 =$oManagerWaitingRoom->offer_exercise($_SESSION[LANG],$course_id,$idExercise);
-
-                                                        var_dump($something2);
-                                                        /*
-                                                        $update = isset($_GET['update']) ? $_GET['update'] : '';
-                                                        if($update&&$idExercise){
-                                                            $gestorBD->updateUserAndRoom($_SESSION[LANG],$course_id);
-                                                        }
-
-                                                        $delete = isset($_GET['delete']) ? $_GET['delete'] : '';
-                                                        if($delete&&$idExercise){
-                                                            $gestorBD->deleteUserAndRoom($_SESSION[LANG],$course_id);
-                                                        }
-                                                        */
-                                                                
-                                                        }
-                                                        
-                                                       /*****************************/
+                                                      
                                                         ?>
 								<fieldset>
                                                                     <?php if ($array_exercises!==false &&
@@ -790,3 +755,4 @@ if (!$user_obj || !$course_id) {
 </body>
 </html>
 <?php } ?>
+	

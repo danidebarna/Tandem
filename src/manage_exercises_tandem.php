@@ -36,7 +36,7 @@ if (!isset($user_obj) || !isset($course_id) || !isset($course_folder) || !$user_
 		if(!$continue) {
 			$message = $LanguageInstance->get('error_no_zip_format');
 		} else {
-			$target_path = dirname(__FILE__).DIRECTORY_SEPARATOR.$course_folder;
+			$target_path = dirname(__FILE__).'/'.$course_folder;
 			
 			$target_path_temp = $target_path.'/temp'.rand();
 				
@@ -44,7 +44,7 @@ if (!isset($user_obj) || !isset($course_id) || !isset($course_folder) || !$user_
 				mkdir($target_path, 0777, true);
 			if (!file_exists($target_path_temp))
 				mkdir($target_path_temp, 0777, true);
-			$target_path_file = $target_path.DIRECTORY_SEPARATOR.$filename;
+			$target_path_file = $target_path.'/'.$filename;
 			if(move_uploaded_file($source, $target_path_file)) {
 				$zip = new ZipArchive();
 				$x = $zip->open($target_path_file);
@@ -61,7 +61,7 @@ if (!isset($user_obj) || !isset($course_id) || !isset($course_folder) || !$user_
 				$overrides_xml_file = 1==(isset($_REQUEST['overrides_xml_file'])?$_REQUEST['overrides_xml_file']:0);
 				$name_xml_file = getNameXmlFileUnZipped($target_path_temp);
 				
-				if (file_exists($target_path.DIRECTORY_SEPARATOR.'data'.$name_xml_file.'.xml') && !$overrides_xml_file) {
+				if (file_exists($target_path.'/'.'data'.$name_xml_file.'.xml') && !$overrides_xml_file) {
 					$message = $LanguageInstance->getTag('file_exercise_xml_aready_exists','<strong>'.$name_xml_file.'</strong>');
 					rrmdir($target_path_temp);
 				} elseif (strlen($name_xml_file)==0) {
@@ -73,7 +73,7 @@ if (!isset($user_obj) || !isset($course_id) || !isset($course_folder) || !$user_
 					$delete = array();
 					$enabled = 1;
 					$id = $gestorBD->register_tandem_exercise($course_id, -1, $user_obj->id, $name_form, $name_xml_file, $enabled);
-					$target_path = dirname(__FILE__).DIRECTORY_SEPARATOR.$course_folder.DIRECTORY_SEPARATOR.$id;
+					$target_path = dirname(__FILE__).'/'.$course_folder.'/'.$id;
 			
 					$delete = moveFromTempToCourseFolder($target_path_temp, $target_path, $delete);
 					rrmdir($target_path_temp);
@@ -103,7 +103,7 @@ if (!isset($user_obj) || !isset($course_id) || !isset($course_folder) || !$user_
 			$exercise = $gestorBD->delete_exercise($course_id, $delete);
 			if ($exercise) {
 				//Eliminem el fitxer xml
-				$target_path_file = dirname(__FILE__).DIRECTORY_SEPARATOR.$course_folder.DIRECTORY_SEPARATOR.$exercise['name_xml_file'].'.xml';
+				$target_path_file = dirname(__FILE__).'/'.$course_folder.'/'.$exercise['name_xml_file'].'.xml';
 				if (file_exists($target_path_file)) {
 					unlink($target_path_file);
 					$message = $LanguageInstance->get('exercise_deleted_ok');

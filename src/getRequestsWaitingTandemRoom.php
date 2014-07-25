@@ -20,10 +20,19 @@ if(isset($_POST['courseID'])){
 
 if(isset($_POST['exerciseID'])){
     $exerciseID = $_POST['exerciseID'];
+    
 }
 
 if(isset($_POST['userID'])){
     $userID = $_POST['userID'];
+}
+
+if(isset($_POST['ltiID'])){
+    $idRscLti = $_POST['ltiID'];
+}
+
+if(isset($_POST['onlyExID'])){
+    $onlyExID = $_POST['onlyExID'];
 }
 
 $oWiewport = new GestorBD();
@@ -33,7 +42,7 @@ $oWiewport = new GestorBD();
 
 $RESPONSE = array();
 
-$RESPONSE = $oWiewport->updateWaitingDB($language, $tandem_language,$courseID, $exerciseID, $userID);
+$RESPONSE = $oWiewport->updateWaitingDB($language, $tandem_language,$courseID, $exerciseID,$userID,$idRscLti,$onlyExID);
 
 print_r($RESPONSE);
 
