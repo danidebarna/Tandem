@@ -1304,7 +1304,7 @@ class GestorBD {
      */
     public function getFirstUserWaiting($id_course,$id_exercise){
    
-     $sql =" select wru.id_user, tandem.id from waiting_room_user as wru   
+     $sql =' select wru.id_user, tandem.id from waiting_room_user as wru   
           inner join waiting_room as wr on wru.id_waiting_room = wr.id
           inner join tandem as tandem on tandem.id_exercise = wr.id_exercise
           and tandem.id_course = wr.id_course and tandem.id_user_host = wru.id_user 
@@ -1312,7 +1312,7 @@ class GestorBD {
           and tandem.id_user_guest = -1
           where wr.id_course = '.$id_course.' and wr.id_exercise = '.$id_exercise.'
           order by wru.created asc 
-          limit 0, 1 ";
+          limit 0, 1 ';
      
       $result = $this->consulta($sql);
 
@@ -1575,36 +1575,30 @@ class GestorBD {
         
         $idExercise =  str_replace('%2F','/', $idExercise);
         
-        
-        
         $tandem_waiting_room = $this->getWaitingTandemRoom($idCourse, $language_tandem, $onlyExID);
         
         $ok = false;
-        
         
         if (!$tandem_waiting_room){
             
             //insertem usuari en la waiting room
            
-           
             $ok  = $this->offer_exercise($language, $idCourse, $onlyExID,$idUser);
            
-           
-            
-            
         }else{
             
              //return 'tandem_exercise';
             $array=array();
             
-            $ok = $this->tandem_exercise($language, $idCourse, $onlyExID);
             
+            //false $user_tandem_host
             $user_tandem_host=$this->getFirstUserWaiting($idCourse,$onlyExID);
-            if ($user_tandem_host) {
-                $id_user_host = $user_tandem_host['id_user'];
-                $id_tandem = $user_tandem_host['id'];
+            if ($user_tandem_host && count($user_tandem_host)>0){
+                $id_user_host = $user_tandem_host[0]['id_user'];
+                $id_tandem = $user_tandem_host[0]['id'];
             
-                $resultUpdate = $this->updateUserGuestTandem($id_tandem,$idUserGuest);
+                $resultUpdate = $this->updateUserGuestTandem($id_tandem,$idUser);
+                $ok = $this->tandem_exercise($language, $idCourse, $onlyExID);
             
             }
            

@@ -10,8 +10,6 @@ $user_obj = isset($_SESSION[CURRENT_USER])?$_SESSION[CURRENT_USER]:false;
 
 $course_id = isset($_SESSION[COURSE_ID])?$_SESSION[COURSE_ID]:false;
 
-$use_waiting_room = isset($_SESSION[USE_WAITING_ROOM])?$_SESSION[USE_WAITING_ROOM]:false;
-
 require_once dirname(__FILE__).'/classes/IntegrationTandemBLTI.php';
 
 
@@ -22,15 +20,15 @@ if (!$user_obj || !$course_id) {
 	require_once(dirname(__FILE__).'/classes/constants.php');
 	$path = '';
 	if (isset($_SESSION[TANDEM_COURSE_FOLDER])) $path = $_SESSION[TANDEM_COURSE_FOLDER].'/';
-
+	
 	$id_resource_lti = $_SESSION[ID_RESOURCE];
-
+	
 	$lti_context = unserialize($_SESSION[LTI_CONTEXT]);
-
-	$gestorBD = new GestorBD();
+	
+	$gestorBD	= new GestorBD();
 	$users_course = $gestorBD->obte_llistat_usuaris($course_id, $user_obj->id);
 	$is_reload = isset($_POST['reload'])?$_POST['reload']!=null:false;
-
+	
 	if ($is_reload || !$users_course || count($users_course)==0) {
 		if ($lti_context->hasMembershipsService()) { //Carreguem per LTI
 			//Convertir el llistat d'usuaris a un array de 
@@ -50,7 +48,7 @@ if (!$user_obj || !$course_id) {
 				$lastname = convertToUtf8($user_lti->lastname);
 				$fullname = convertToUtf8($user_lti->fullname);
 				$email = convertToUtf8($user_lti->email);
-
+									
 				$gestorBD->afegeixUsuari($course_id, $id_user_lti, $firstname, $lastname, $fullname, $email, '');
 				//$users_course[$id_user_lti] = $gestorBD->get_user_by_username($id_user_lti);
 			}
@@ -65,7 +63,7 @@ if (!$user_obj || !$course_id) {
 			require_once dirname(__FILE__).'/classes/gestorOKI.php';
 			$gestorOKI	= new GestorOKI();
 			$users_course = $gestorOKI->obte_llistat_usuaris($gestorBD, $course_id);
-
+			
 		}
 	}
 	$is_showTandem = isset($_POST['showTandem'])?$_POST['showTandem']!=null:false;
@@ -75,13 +73,13 @@ if (!$user_obj || !$course_id) {
 		$exercise  = isset($_POST['room'])?intval($_POST['room'],10):false;
 		$user_tandems = $gestorBD->obte_llistat_tandems($course_id, $user_selected, $exercise);
 	}
-
-
-
-
+	
+	
+	
+	
 	//Permetem que seleccini l'exercici 20111110
 	$is_host = $user_obj->is_host;
-
+	
 	$array_exercises = $gestorBD->get_tandem_exercises($course_id);
 	$tandemBLTI = new IntegrationTandemBLTI();
 	$selected_exercise = $tandemBLTI->checkXML2GetExercise($user_obj);
@@ -92,7 +90,7 @@ if (!$user_obj || !$course_id) {
 
 	//Agafem les dades de l'usuari
 	$name = mb_convert_encoding($user_obj->name, 'UTF-8', 'UTF-8');
-
+	
 ?>
 <!DOCTYPE html>
 <html>
@@ -519,22 +517,9 @@ if (!$user_obj || !$course_id) {
 				<div id="content">
 					<span class="welcome"><?php echo $LanguageInstance->get('welcome')?> <?php echo $name ?>!</span><br/>
 					<form action="#" method="post" id="main_form" class="login_form">
-					    
-                                         <?php     
-                                           
-                                           
-                                            
-                                            echo '<div>Lenguaje de la sesion: '.$lang = $_SESSION[LANG].'</div>'.'<br>';
-                                            echo 'ID del Curso: '.$course_id.'<br>';
-                                            echo 'ID Usuario: '.$user_obj->id.'<br>';
-                                            print_r($array_exercises);
-                                            echo '<br>';
-                                            ?>   
-                                            
 						<?php if ($array_exercises!==false && is_array($array_exercises) && count($array_exercises)>0) {?>
-							<?php if (!$use_waiting_room)	{ ?>
-                                                            <fieldset>
-                                                               <?php 
+								<fieldset>
+								<?php 
 									if ($users_course && count($users_course)>0) {
 									?>
 									<label for="select_user" title="1. <?php echo $LanguageInstance->get('select_users')?>"><img class="point" src="css/images/p1.png" alt="1. <?php echo $LanguageInstance->get('select_users')?>" /></label>
@@ -552,18 +537,9 @@ if (!$user_obj || !$course_id) {
 							?> 
 							<label for="not_users" title="<?php echo $msg?>"><?php echo $msg?></label>
 							<?php } ?>
-                                                        
-                                                       
 								</fieldset>
-                                                                <?php } else { 
-                                                                   
-                                                                
-                                                               }
-                                                        
-                                                      
-                                                        ?>
 								<fieldset>
-                                                                    <?php if ($array_exercises!==false &&
+									<?php if ($array_exercises!==false &&
 									 is_array($array_exercises) &&
 									 count($array_exercises)>0) {?>
 										<label for="select_exercise" title="2. <?php echo $LanguageInstance->get('select_exercise')?>"><img class="point" src="css/images/p2.png" alt="2. <?php echo $LanguageInstance->get('select_exercise')?>" /></label>
@@ -755,4 +731,3 @@ if (!$user_obj || !$course_id) {
 </body>
 </html>
 <?php } ?>
-	

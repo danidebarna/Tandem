@@ -550,7 +550,8 @@ jQuery(document).ready(function(){
                                 getWaitingTandemRoom($(this).data("id-exercise"),$(this).data("id-number")); //Passamos por ajax el id del ejercicio a la base de datos 
                                 
                                 //conexio tandem
-                                if ($(this).data("is-tandem")==false) {
+                                if ($(this).data("is-tandem")==false){
+                                    //alert("executing XML Room");
                                     var content = getXMLRoom($(this).data("id-exercise"));
                                 }
                                 //alert (content);
@@ -856,12 +857,12 @@ jQuery(document).ready(function(){
                                     <?php
                                     } else {
                                         /* ******************************* */
-
+                                        echo $course_id;
                                         /*
                                         echo '<h1>DENTRO!!!!</h1>';
 
                                         echo '<div>' . $lang = $_SESSION[LANG] . '</div>';
-                                        echo $course_id;
+                                       
                                         echo $user_obj->id;
 
 
