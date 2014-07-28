@@ -11,6 +11,8 @@ $node = $_REQUEST['node'];
 $classOf = $_REQUEST['classOf'];
 $data = $_REQUEST['data'];
 
+$use_waiting_room = $_SESSION[USE_WAITING_ROOM];
+
 
 $id_resource_lti = $_SESSION[ID_RESOURCE];
 $id_user_guest = $_REQUEST['id_user_guest'];
@@ -187,8 +189,17 @@ if (getinTandemStatus($id_user_guest,$id_course) == 1 && compareDateTime(getlast
 					openLinkWaiting(); });
 	
 				function openLink(){
-					top.document.location.href="<?php echo $classOf;?>.php?room=<?php echo $exercise;?>&user=<?php echo $user_obj->type_user?>&nextSample=<?php echo $nextSample;?>&node=<?php echo $node;?>&data=<?php echo $data;?>&userb=<?php echo $id_user_guest;?>";
-				}
+                                        <?php if ($use_waiting_room) {
+                                            ?>
+                                           top.showWaitingMessage("<?php echo $classOf;?>.php?room=<?php echo $exercise;?>&user=<?php echo $user_obj->type_user?>&nextSample=<?php echo $nextSample;?>&node=<?php echo $node;?>&data=<?php echo $data;?>&userb=<?php echo $id_user_guest;?>", "<?php echo $_SESSION[CURRENT_TANDEM] ?>");
+				
+                                        <?php } else {
+                                            ?>
+                                        top.document.location.href="<?php echo $classOf;?>.php?room=<?php echo $exercise;?>&user=<?php echo $user_obj->type_user?>&nextSample=<?php echo $nextSample;?>&node=<?php echo $node;?>&data=<?php echo $data;?>&userb=<?php echo $id_user_guest;?>";
+				
+                                        <?php } 
+                                            ?>
+					}
 	
 				function openLinkWaiting(){
 					top.document.getElementById('roomStatus').innerHTML="<?php echo $LanguageInstance->get('Connecting...')?>";

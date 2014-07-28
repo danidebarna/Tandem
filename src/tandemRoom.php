@@ -313,7 +313,11 @@ jQuery(document).ready(function(){
 						var nameuser_txt = $(xml).find('nameuser').text();
 						var exercise_txt = $(xml).find('exercise').text();
 						$("#info-block").show();
-						$("#info-block").append("<div class='alert-inside'><i class='icon'></i><h3><?php echo $LanguageInstance->get('just_been_invited');?> <em>"+nameuser_txt+"</em> <?php echo $LanguageInstance->get('exercise');?>: <em>"+exercise_txt+"</em> </h3><a id='startNowBtn' href=\"accessTandem.php?id="+id_txt+"\" class='tandem-btn'><?php echo $LanguageInstance->get('accept');?></a></div>");
+                                                
+                                                window.location.replace("accessTandem.php?id="+id_txt);
+                                                
+                                                /*ja no afectaria*/
+						//$("#info-block").append("<div class='alert-inside'><i class='icon'></i><h3><?php echo $LanguageInstance->get('just_been_invited');?> <em>"+nameuser_txt+"</em> <?php echo $LanguageInstance->get('exercise');?>: <em>"+exercise_txt+"</em> </h3><a id='startNowBtn' href=\"accessTandem.php?id="+id_txt+"\" class='tandem-btn'><?php echo $LanguageInstance->get('accept');?></a></div>");
 						setExpiredNow(60);
 						clearInterval(intervalCheck);
 				  	}
@@ -660,8 +664,38 @@ jQuery(document).ready(function(){
 		}
 	}
         
-        function startTask(){
+        function showWaitingMessage(urlToRedirect, tandem_id){
             if ($("#modal-start-task").length > 0){
+                alert(urlToRedirect);
+                alert(tandem_id);
+                clearInterval(intervalCheck);
+                var TimerSUAR = 1000;
+                intervalCheckHavePartner = setInterval(function(){
+			$.ajax({
+				  type: 'GET',
+				  url: "have_partner.php",
+				  data: {
+					  id: tandem_id
+				  },
+				  dataType: "xml",
+				  success: function(xml){
+				  	var id_txt = $(xml).find('id').text();
+				  	if (id_txt &&  id_txt.length>0) {
+						document.location.href = urlToRedirect;
+                                                /*ja no afectaria*/
+						//$("#info-block").append("<div class='alert-inside'><i class='icon'></i><h3><?php echo $LanguageInstance->get('just_been_invited');?> <em>"+nameuser_txt+"</em> <?php echo $LanguageInstance->get('exercise');?>: <em>"+exercise_txt+"</em> </h3><a id='startNowBtn' href=\"accessTandem.php?id="+id_txt+"\" class='tandem-btn'><?php echo $LanguageInstance->get('accept');?></a></div>");
+					//	setExpiredNow(60);
+						clearInterval(intervalCheckHavePartner);
+				  	}
+				  },
+				  error: function(){
+				  		clearInterval(intervalCheckHavePartner);
+						TimerSUAR+=500;
+						intervalCheckHavePartner = setInterval(intervalCheckHavePartner,TimerSUAR);
+						notifyTimerDown('<?php echo $LanguageInstance->get('SlowConn')?>');
+				  }
+			});
+		},TimerSUAR);	
                 $('#modal-start-task').modal( {onClose: function () {
                    beginningOneMoreTime();
                     $.modal.close(); // must call this!
@@ -929,7 +963,7 @@ jQuery(document).ready(function(){
                                 ?>
                                 <div class="manage-area">
                                     <div class="clear">
-                                        <div id="info-block" class="alert alert-info" style="display:none"></div>
+                                        <!--<div id="info-block" class="alert alert-info" style="display:none"></div>-->
                                         <!--<div class="info" style="display:none"></div>--> <!-- 10092012 nfinney> type error: changed to 'none' from 'hidden' -->
                                         <?php if (!$pending_invitations) { ?>
                                             <div class="title">

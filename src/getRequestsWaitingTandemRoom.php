@@ -6,34 +6,39 @@
      
 require_once dirname(__FILE__) . '/classes/gestorBD.php';  
 
-if(isset($_POST['language'])){
-    $language = $_POST['language'];
+if(isset($_REQUEST['language'])){
+    $language = $_REQUEST['language'];
 }
 
-if(isset($_POST['tandem_language'])){
-    $tandem_language = $_POST['tandem_language'];
+
+
+if(isset($_REQUEST['tandem_language'])){
+    $tandem_language = $_REQUEST['tandem_language'];
 }
 
-if(isset($_POST['courseID'])){
-    $courseID = $_POST['courseID'];
+if(isset($_REQUEST['courseID'])){
+    $courseID = $_REQUEST['courseID'];
 }
 
-if(isset($_POST['exerciseID'])){
-    $exerciseID = $_POST['exerciseID'];
+if(isset($_REQUEST['exerciseID'])){
+    $exerciseID = $_REQUEST['exerciseID'];
     
 }
 
-if(isset($_POST['userID'])){
-    $userID = $_POST['userID'];
+if(isset($_REQUEST['userID'])){
+    $userID = $_REQUEST['userID'];
 }
 
-if(isset($_POST['ltiID'])){
-    $idRscLti = $_POST['ltiID'];
+if(isset($_REQUEST['ltiID'])){
+    $idRscLti = $_REQUEST['ltiID'];
 }
 
-if(isset($_POST['onlyExID'])){
-    $onlyExID = $_POST['onlyExID'];
+if(isset($_REQUEST['onlyExID'])){
+    $onlyExID = $_REQUEST['onlyExID'];
 }
+
+echo var_dump($language,$tandem_language,$courseID,$exerciseID,$userID,$idRscLti,$onlyExID);
+
 
 $oWiewport = new GestorBD();
 
@@ -46,6 +51,7 @@ $RESPONSE = $oWiewport->updateWaitingDB($language, $tandem_language,$courseID, $
 
 print_r($RESPONSE);
 
+echo var_dump($RESPONSE);
 //tandem
 
 //$aTandemDB=$oWiewport->updateTandemDB($language, $courseID);
