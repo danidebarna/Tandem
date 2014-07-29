@@ -513,7 +513,7 @@ jQuery(document).ready(function(){
                         var name_xml_file = extra_exercise + data[i]['name_xml_file']
                                                    
                         
-                        if(localLanguage != language){
+                        if(localLanguage == language || number_user_waiting==0){
                             //waiting
                             //alert('primera opcio');
                             sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-more-one">WU ='+number_user_waiting+ ' IDEx ='+id_exercise+'</label></li>';
