@@ -1575,7 +1575,15 @@ class GestorBD {
         
         $idExercise =  str_replace('%2F','/', $idExercise);
         
-        $tandem_waiting_room = $this->getWaitingTandemRoom($idCourse, $language_tandem, $onlyExID);
+        $other_language = $language_tandem=='en_US'?'es_ES':'en_US';
+
+        //1st. Check it there are other language offering
+        $tandem_waiting_room_other_lang_offered = $this->getWaitingTandemRoom($idCourse, $other_language, $onlyExID);
+        $tandem_waiting_room = true;
+        if (!$tandem_waiting_room_other_lang_offered) {
+            //2nd if not we get if my language offering
+            $tandem_waiting_room = $this->getWaitingTandemRoom($idCourse, $language_tandem, $onlyExID);
+        }
         
         $ok = false;
         
