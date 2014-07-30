@@ -1,4 +1,6 @@
 <?php
+error_reporting(0);
+
 function findAttribute($object, $attribute) { 
 	foreach($object->attributes() as $a => $b) { 
 		if ($a == $attribute) $return = $b; 
@@ -52,12 +54,18 @@ function preTimer($room,$user,$nextSample){
   	$xml->asXML(PROTECTED_FOLDER.'/'.$room.".xml");	
 }
 
+
+
+
 function editShowNextQuestion($room,$user,$nextSample){
+       
 	$xml = simplexml_load_file(PROTECTED_FOLDER.'/'.$room.".xml");
-	if(findAttribute($xml->actions[$nextSample],firstUserEnd))
-			$xml->actions[$nextSample]->addAttribute('secondUserEnd',$user);
-	else 
-			$xml->actions[$nextSample]->addAttribute('firstUserEnd',$user);
+	if(findAttribute($xml->actions[$nextSample],firstUserEnd)){
+            $xml->actions[$nextSample]->addAttribute('secondUserEnd',$user);
+        } 
+	else{
+            $xml->actions[$nextSample]->addAttribute('firstUserEnd',$user);
+        }
 	$xml->asXML(PROTECTED_FOLDER.'/'.$room.".xml");	
 }
 
@@ -78,11 +86,15 @@ function editXMLMap($room,$user,$number,$nextSample) {
 		}
 		if($action!="" && findAttribute($action,firstUser)){
 			$action->addAttribute('secondUser',$user);
-		}else $action->addAttribute('firstUser',$user); 
+                }else{
+                        $action->addAttribute('firstUser',$user); 
+                }
 		
 		$xml->asXML(PROTECTED_FOLDER.'/'.$room.".xml");
 }
 
+
+//var_dump($_GET["user"],$_GET["room"]);
 
 
 function thruTimer($nextSample,$numBtn){

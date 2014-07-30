@@ -6,10 +6,15 @@
      
 require_once dirname(__FILE__) . '/classes/gestorBD.php';  
 
+
 if(isset($_POST['language'])){
     $language = $_POST['language'];
 }else{
-  
+}
+
+if(isset($_POST['localLanguageURI'])){
+    $localLanguageURI = $_POST['localLanguageURI'];
+}else{
 }
 
 if(isset($_POST['courseID'])){

@@ -1631,10 +1631,11 @@ class GestorBD {
         
         $where = '';
         
-       
+      
         if ($language){
             $where .= ' and wr.language = '.$this->escapeString($language);
         }
+      
         if ($id_exercise>0){
             $where .= ' and wr.id_exercise = '.$this->escapeString($id_exercise);
         }

@@ -479,6 +479,7 @@ jQuery(document).ready(function(){
                 $.ajax({
                     data:{ 
                             language: "<?php echo $lang = $_SESSION[LANG]; ?>", 
+                            localLanguageURI: "<?php echo $_GET['localLanguage']; ?>",
                             courseID: "<?php echo $course_id; ?>" 
                         },
                     url: "updateWiewportWaitingTandemRoom.php",
@@ -519,9 +520,9 @@ jQuery(document).ready(function(){
                             
                             //ajax 
                             //mostrarem dades en un jquery dialog
-                        }else{
-                            //tandem
-                            //alert('segona opcio');
+                        }
+                        if(localLanguage != language && number_user_waiting>0){
+                        
                             sumatorioTandem += '<li class="lineWT"><input class="exButtonTandem" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" id="exercise-'+id_exercise+'" data-is-tandem="true" data-id-exercise="'+name_xml_file+'"  value="'+name+'"><label class="common-waiting-tandem_users tandem-users-more-one">WU ='+number_user_waiting+ ' IDEx ='+id_exercise+'</label></li>';
                             
                         }
