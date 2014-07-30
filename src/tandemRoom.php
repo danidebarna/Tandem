@@ -246,10 +246,10 @@ jQuery(document).ready(function(){
 			user_selected = $('#user_selected').val();
 			room_temp = $('#room').val();
 			if (user_selected=="" || user_selected=="-1") {
-				alert("<?php echo $LanguageInstance->get('select_user')?>");
+				//alert("<?php echo $LanguageInstance->get('select_user')?>");
 			} else {
 				if (room_temp=="" || room_temp=="-1") {
-					alert("<?php echo $LanguageInstance->get('select_exercise')?>");
+					//alert("<?php echo $LanguageInstance->get('select_exercise')?>");
 				} else {
 					enable_button('');
 					getXMLRoom(room_temp);
@@ -447,11 +447,10 @@ jQuery(document).ready(function(){
             function getWaitingTandemRoom(exercise_id,only_exercise_id){
                 //6%2FTandemXWikiadmin060220131529&userID=1
                 
-                alert(exercise_id);
+                //alert(exercise_id);
                 $.ajax({
                     data:{ 
                             'language': "<?php echo $_SESSION[LANG]; ?>", 
-                            'tandem_language' : "<?php echo $languageURL; ?>",
                             'courseID': "<?php echo $course_id; ?>", 
                             //'exerciseID': encodeURIComponent(exercise_id),
                             'exerciseID': exercise_id,
@@ -549,9 +548,17 @@ jQuery(document).ready(function(){
                                 //startTask(); //We show the connexion div with the charging image
                                 
                                 //alert($(this).data("id-exercise"));
-                                
+                                if ($(this).data("is-tandem")==true){
+                                    //we call charging div !!!
+                                    //alert("executing charging DIV!!!");
+                                    tandemStandBy();
+                                    //$("#simplemodal-container").show( "fast");
+                                    top.document.getElementById('roomStatus').innerHTML="<?php echo $LanguageInstance->get('Connecting...')?>";
+                                    setTimeout("alertMsg",30000);
+                                }
                                 //afegim + 1 o restarem -1 ...
                                 getWaitingTandemRoom($(this).data("id-exercise"),$(this).data("id-number")); //Passamos por ajax el id del ejercicio a la base de datos 
+                                
                                 
                                 //conexio tandem
                                 if ($(this).data("is-tandem")==false){
@@ -664,10 +671,18 @@ jQuery(document).ready(function(){
 		}
 	}
         
+        //conectando tandem
+        function tandemStandBy(){
+		if ($("#waitingUser").length > 0){
+			$.modal($('#waitingUser'));
+			//accionTimer();
+		}
+	}
+        
         function showWaitingMessage(urlToRedirect, tandem_id){
             if ($("#modal-start-task").length > 0){
-                alert(urlToRedirect);
-                alert(tandem_id);
+               // alert(urlToRedirect);
+               // alert(tandem_id);
                 clearInterval(intervalCheck);
                 var TimerSUAR = 1000;
                 intervalCheckHavePartner = setInterval(function(){
@@ -703,6 +718,8 @@ jQuery(document).ready(function(){
                 
             }
         }
+        
+        
         
         
         function timeStop(){
@@ -832,8 +849,48 @@ jQuery(document).ready(function(){
                             </div>
                             
                             
+                            <div id="waitingUser" class="modal">
+                                <script>
+                                         
+                                </script>
+                                <body id="home_" style="background-color:#FFFFFF;">
+                                <div>
+                                        <img id="home" src="images/final1.png" width="310" height="85" alt="" />
+                                </div>
+                                <div class="text">
+                                        <!-- Falten introduir al PO -->
+                                        <p><?php echo $LanguageInstance->get('Waiting for Waiting User Connexion !!');?></p>
+                                        <p><?php echo $LanguageInstance->get('Please Stand By !!');?></p>
+                                </div>
+                                <div class="waitingImagePosition">
+                                  <img id="home" src="css/images/loading_1.gif" width="150" height="150" alt="" />
+                                </div>
+                            </body>
+                            </div>
+                            
+                            
+                            
                             
                             <div id="modal-end-task" class="modal">
+                                <script>
+                                         
+                                </script>
+                                <body id="home_" style="background-color:#FFFFFF;">
+                                <div>
+                                        <img id="home" src="images/final1.png" width="310" height="85" alt="" />
+                                </div>
+                                <div class="text">
+                                        <!-- Falten introduir al PO -->
+                                        <p><?php echo $LanguageInstance->get('Waiting for Tandem Connexion !!');?></p>
+                                        <p><?php echo $LanguageInstance->get('Please Stand By !!');?></p>
+                                </div>
+                                <div class="waitingImagePosition">
+                                  <img id="home" src="css/images/loading_1.gif" width="150" height="150" alt="" />
+                                </div>
+                            </body>
+                            </div>
+                            
+                            <div id="" class="modal">
                                 <p class="msg">Time up!</p>
                                 <p><a href='#' id="lnk-end-task" class="btn simplemodal-close">Close</a></p>
                             </div>
@@ -851,14 +908,11 @@ jQuery(document).ready(function(){
                             </div>
                             <div class="cleaner"></div> 
                             
-                            <!--
-                            <div id="simplemodal-container" class="modal">
-                                Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32. 
-                                <div class="positionCharge"><img src="css/images/loading_1.gif" alt=""/></div>
-                            </div>
-                            -->
+                            
+                            
+                            
                                 <?php
-                                //echo '<div>Lenguaje de la sesion: ' . $lang = $_SESSION[LANG] . '</div>' . '<br>';
+                                echo '<div><h1>Lenguaje de la sesion: ' . $lang = $_SESSION[LANG] . '</h1></div>' . '<br>';
                                // echo 'ID del Curso: ' . $course_id . '<br>';
                                 //echo 'ID Usuario: ' . $user_obj->id . '<br>';
                                 //print_r($array_exercises);

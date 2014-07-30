@@ -12,9 +12,6 @@ if(isset($_POST['language'])){
 
 
 
-if(isset($_POST['tandem_language'])){
-    $tandem_language = $_POST['tandem_language'];
-}
 
 if(isset($_POST['courseID'])){
     $courseID = $_POST['courseID'];
@@ -45,7 +42,7 @@ $oWiewport = new GestorBD();
 
 $RESPONSE = array();
 
-$RESPONSE = $oWiewport->updateWaitingDB($language, $tandem_language,$courseID, $exerciseID,$userID,$idRscLti,$onlyExID);
+$RESPONSE = $oWiewport->updateWaitingDB($language,$courseID, $exerciseID,$userID,$idRscLti,$onlyExID);
 
 print_r($RESPONSE);
 //tandem

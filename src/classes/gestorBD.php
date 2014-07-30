@@ -1570,26 +1570,26 @@ class GestorBD {
         }
     }
     
-    public function updateWaitingDB($language, $language_tandem, $idCourse, $idExercise, $idUser, $idRscLti,$onlyExID) {
+    public function updateWaitingDB($language, $idCourse, $idExercise, $idUser, $idRscLti,$onlyExID) {
         
         
         $idExercise =  str_replace('%2F','/', $idExercise);
         
-        $other_language = $language_tandem=='en_US'?'es_ES':'en_US';
+        $other_language = $language == 'en_US'?'es_ES':'en_US';
 
         //1st. Check it there are other language offering
         $tandem_waiting_room_other_lang_offered = $this->getWaitingTandemRoom($idCourse, $other_language, $onlyExID);
         $tandem_waiting_room = true;
         if (!$tandem_waiting_room_other_lang_offered) {
             //2nd if not we get if my language offering
-            $tandem_waiting_room = $this->getWaitingTandemRoom($idCourse, $language_tandem, $onlyExID);
+            $tandem_waiting_room = $this->getWaitingTandemRoom($idCourse, $language, $onlyExID);
         }
         
         $ok = false;
         
         if (!$tandem_waiting_room){
             
-            //insertem usuari en la waiting room
+            //3.-insertem usuari en la waiting room
            
             $ok  = $this->offer_exercise($language, $idCourse, $onlyExID,$idUser);
            
@@ -1617,7 +1617,7 @@ class GestorBD {
     
     
     /***************************************************************************/
-    /*   ASPECTE VISUAL DEL TANDEM WAITING ROOM  */
+    /*   ASPECTE VISUAL DEL TANDEM - WAITING ROOM  */
     /****************************************************************************/
     
     
@@ -1630,6 +1630,8 @@ class GestorBD {
         
         
         $where = '';
+        
+       
         if ($language){
             $where .= ' and wr.language = '.$this->escapeString($language);
         }
