@@ -353,7 +353,7 @@ if (!$user_obj || !$course_id) {
 					user_selected=$('#user_selected').val();
 					document.getElementById('roomStatus').innerHTML="";
 	$('#idfrm').attr('src','checkRoomUserTandem.php?id_user_guest='+user_selected+'&nextSample='+nextSample+'&node='+node+'&classOf='+classOf+'&data='+data);
-				} else {
+				}else{
 					$('#roomStatus').html('Error loading exercise '+data+' contact with the administrators');
 				}
 			} else if ((xmlReq.readyState	==	4) && (xmlReq.status == 404)) {

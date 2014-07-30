@@ -22,6 +22,8 @@ $course_id = isset($_SESSION[COURSE_ID]) ? $_SESSION[COURSE_ID] : false;
 $use_waiting_room = isset($_SESSION[USE_WAITING_ROOM]) ? $_SESSION[USE_WAITING_ROOM] : false;
 
 
+//$_SESSION[LANG] = 'es_ES';
+
 
 require_once dirname(__FILE__) . '/classes/IntegrationTandemBLTI.php';
 
@@ -494,10 +496,12 @@ jQuery(document).ready(function(){
                     var localLanguage = "<?php echo $_GET['localLanguage']; ?>"; 
 
                     sumatorioWaiting = '';
-                    sumatorioWaiting += '<li class="lineWT title-waiting">WAITING</li>';
+                    sumatorioWaitingTable = '';
+                    //sumatorioWaiting += '<li class="lineWT title-waiting">WAITING</li>';
                     
                     sumatorioTandem = '';
-                    sumatorioTandem += '<li class="lineWT title-tandem">TANDEM</li>';
+                    sumatorioTandemTable = '';
+                    //sumatorioTandem += '<li class="lineWT title-tandem">TANDEM</li>';
                     
                     for (var i in data){
                         
@@ -510,21 +514,30 @@ jQuery(document).ready(function(){
                         var number_user_waiting = data[i]['number_user_waiting'];
                         
                         var extra_exercise = data[i]['relative_path'] && data[i]['relative_path'].length > 0 ? data[i]['relative_path'].replace("/","").replace("\\","")+ '/' : '';
-                        var name_xml_file = extra_exercise + data[i]['name_xml_file']
+                        
+                        var name_xml_file = extra_exercise + data[i]['name_xml_file'];
                                                    
                         
-                        if(localLanguage == language || number_user_waiting==0){
+                        if((localLanguage == language) || number_user_waiting==0){
                             //waiting
                             //alert('primera opcio');
-                            sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-more-one">WU ='+number_user_waiting+ ' IDEx ='+id_exercise+'</label></li>';
+                            if (number_user_waiting !=0 ){
+                               // sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+ '</label></li>';
+                                sumatorioWaitingTable +='<td><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"></td><td><label style="color:black;" class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+ '</label></td>';
+                            
+                            }
+                            if (number_user_waiting == 0 || number_user_waiting == null){
+                                //sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-zero">'+number_user_waiting+'</label></li>';
+                                sumatorioWaitingTable +='<tr><td><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"></td><td><label style="color:red;" class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+ '</label></td></tr>';
+                            }
                             
                             //ajax 
                             //mostrarem dades en un jquery dialog
                         }
                         if(localLanguage != language && number_user_waiting>0){
                         
-                            sumatorioTandem += '<li class="lineWT"><input class="exButtonTandem" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" id="exercise-'+id_exercise+'" data-is-tandem="true" data-id-exercise="'+name_xml_file+'"  value="'+name+'"><label class="common-waiting-tandem_users tandem-users-more-one">WU ='+number_user_waiting+ ' IDEx ='+id_exercise+'</label></li>';
-                            
+                            //sumatorioTandem += '<li class="lineWT"><input class="exButtonTandem" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" id="exercise-'+id_exercise+'" data-is-tandem="true" data-id-exercise="'+name_xml_file+'"  value="'+name+'"><label class="common-waiting-tandem_users tandem-users-more-one">'+number_user_waiting+'</label></li>';
+                            sumatorioTandemTable += '<tr><td><input class="exButtonTandem" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" id="exercise-'+id_exercise+'" data-is-tandem="true" data-id-exercise="'+name_xml_file+'"  value="'+name+'"></td><td><label style="color:black;" class="common-waiting-tandem_users tandem-users-more-one">'+number_user_waiting+'</label></td></tr>';
                         }
                         //alert(id_exercise+'-'+name+'-'+language+'-'+number_user_waiting);
                         
@@ -532,6 +545,9 @@ jQuery(document).ready(function(){
                     $('.tandem-room-left ul').html(sumatorioWaiting);
                     $('.tandem-room-right ul').html(sumatorioTandem);
                     
+                    $('.leftTable').html(sumatorioWaitingTable);
+                    $('.rightTable').html(sumatorioTandemTable);
+                     
                     for (var i in data){
                         
                         var id_exercise = data[i]['id_exercise'];
@@ -909,153 +925,63 @@ jQuery(document).ready(function(){
                             </div>
                             <div class="cleaner"></div> 
                             
+                    <table id="statisticsWaiting" class="table" style="float:left;">
+                    <thead>
+                            <tr>
+                                    <th style="width:100px;">Waiting</th>
+                                    <th style="width:100px;">Users Waiting</th>
+                            </tr>
+                    </thead>
+                    <tbody class="leftTable">
+                        
+                    </tbody>
+                    </table>
+                            
+                    
+                            
+                    <table id="statisticsTandem" class="table" style="float:left;margin-left:10px;">
+                    <thead>
+                            <tr>
+                                    <th style="width:100px;">Tandem</th>
+                                    <th style="width:100px;">Users Tandem</th>
+                            </tr>
+                    </thead>
+                    <tbody class="rightTable">
+                        
+                    </tbody>
+                    </table>    
                             
                             
                             
                                 <?php
-                                echo '<div><h1>Lenguaje de la sesion: ' . $lang = $_SESSION[LANG] . '</h1></div>' . '<br>';
+                                //echo '<div><h1>Lenguaje de la sesion: ' . $lang = $_SESSION[LANG] . '</h1></div>' . '<br>';
                                // echo 'ID del Curso: ' . $course_id . '<br>';
                                 //echo 'ID Usuario: ' . $user_obj->id . '<br>';
                                 //print_r($array_exercises);
                                 echo '<br>';
                                 ?>
-                                <?php if ($array_exercises !== false && is_array($array_exercises) && count($array_exercises) > 0) { ?>
-                                    <?php if (!$use_waiting_room) { ?>
-                                        <fieldset>
-                                        <?php
-                                        if ($users_course && count($users_course) > 0) {
-                                            ?>
-                                                <label for="select_user" title="1. <?php echo $LanguageInstance->get('select_users') ?>"><img class="point" src="css/images/p1.png" alt="1. <?php echo $LanguageInstance->get('select_users') ?>" /></label>
-                                                <select name="user_selected" id="user_selected" tabindex="1" onchange="enable_exercise(this.value);">
-                                                    <option value="-1"><?php echo $LanguageInstance->get('select_users') ?></option>
-                                                    <?php foreach ($users_course as $user) {
-                                                        if ($user['id'] != $user_obj->id) {
-                                                            ?>
-                                                            <option value="<?php echo $user['id'] ?>" <?php echo ($user_selected == $user['id'] ? 'selected' : '') ?>><?php echo $user['surname'] . ', ' . $user['firstname'] ?></option>
-                                                    <?php }
-                                                    }
-                                                    ?>
-                                                </select>
-                                                <?php
-                                            } else {
-                                                $msg = $gestorOKI->getLastError() == null ? $LanguageInstance->get('no_users_in_course') : $gestorOKI->getLastError();
-                                                ?>
-                                                <label for="not_users" title="<?php echo $msg ?>"><?php echo $msg ?></label>
-                                            <?php } ?>
-                                        </fieldset>
-                                    <?php
-                                    } else {
-                                        /* ******************************* */
-                                        echo $course_id;
-                                        /*
-                                        echo '<h1>DENTRO!!!!</h1>';
-
-                                        echo '<div>' . $lang = $_SESSION[LANG] . '</div>';
-                                       
-                                        echo $user_obj->id;
-
-
-                                        $idExercise = isset($_GET['id_exercise']) ? $_GET['id_exercise'] : '';
-
-
-                                        $insert = isset($_GET['insert']) ? $_GET['insert'] : '';
-                                        if ($insert && $idExercise) {
-                                            $insertParams = $gestorBD->insertUserAndRoom($_SESSION[LANG], $course_id, $idExercise, $use_waiting_room, $user_obj->id);
-                                        }
-
-                                        $something1 = $gestorBD->check_offered_exercises($_SESSION[LANG], $course_id);
-
-                                        var_dump($something1);
-
-                                        $something2 = $gestorBD->offer_exercise($_SESSION[LANG], $course_id, $idExercise);
-
-                                        var_dump($something2);
-                                         */
-                                         
-                                        /*
-                                          $update = isset($_GET['update']) ? $_GET['update'] : '';
-                                          if($update&&$idExercise){
-                                          $gestorBD->updateUserAndRoom($_SESSION[LANG],$course_id);
-                                          }
-
-                                          $delete = isset($_GET['delete']) ? $_GET['delete'] : '';
-                                          if($delete&&$idExercise){
-                                          $gestorBD->deleteUserAndRoom($_SESSION[LANG],$course_id);
-                                          }
-                                         */
-                                    }
-
-                                    /*                                     * ************************** */
-                                    ?>
-                                    <fieldset>
-                                        <?php
-                                        if ($array_exercises !== false &&
-                                                is_array($array_exercises) &&
-                                                count($array_exercises) > 0) {
-                                            ?>
-                                            <label for="select_exercise" title="2. <?php echo $LanguageInstance->get('select_exercise') ?>"><img class="point" src="css/images/p2.png" alt="2. <?php echo $LanguageInstance->get('select_exercise') ?>" /></label>
-                                           <select id="room" name="room" tabindex="2" onchange="enable_button(this.value);">
-                                                <option value="-1"><?php echo $LanguageInstance->get('select_exercise') ?></option>
-                                                <?php
-                                                foreach ($array_exercises as $exercise) {
-                                                    $extra_exercise = isset($exercise['relative_path']) && strlen($exercise['relative_path']) > 0 ? str_replace("/", "", $exercise['relative_path']) . '/' : '';
-                                                    ?>
-                                                    <option value="<?php echo $extra_exercise . $exercise['name_xml_file'] ?>" <?php echo ($selected_exercise_select == $exercise['name_xml_file'] || $selected_exercise == $exercise['name_xml_file']) ? 'selected="selected"' : '' ?>><?php echo $exercise['name'] ?></option>
-                                            <?php } ?>
-                                            </select>
-                                        <?php } else { ?>
-                                            <input type="text" id="room" value="" size="10" onchange="putLink();"/>
-                                 <?php } ?>
-                                    </fieldset>
-                                    <fieldset>
-                                        <label for="start" title="3. <?php echo $LanguageInstance->get('start') ?>"><img class="point" src="css/images/p3.png" alt="3. <?php echo $LanguageInstance->get('start') ?>" /></label>
-                                        <input type="button" onclick="Javascript:putLink();" id="start" name="start" disabled="disabled" value="<?php echo $LanguageInstance->get('start') ?>" class="tandem-btn" tabindex="3" />
-                                    </fieldset>
-                                <?php
-                                } else {
-                                    echo '<div id="alert-top" class="alert alert-warning"><div class="alert-inside"><i class="icon"></i><h3>' . Language::get('no_exercises_found') . '</h3></div></div>';
-                                }
-                                ?>
-                                <div class="manage-area">
+                                
+                                <div class="manage-area" style="display:none;">
                                     <div class="clear">
                                         <!--<div id="info-block" class="alert alert-info" style="display:none"></div>-->
                                         <!--<div class="info" style="display:none"></div>--> <!-- 10092012 nfinney> type error: changed to 'none' from 'hidden' -->
                                         <?php if (!$pending_invitations) { ?>
-                                            <div class="title">
-                                                <h2><?php echo $LanguageInstance->get('pending_tandems') ?></h2>
-                                            </div>
-                                            <div class="message">
-                                                <p><strong><?php echo $LanguageInstance->get('no_pending_tandems') ?></strong></p>
-                                            </div>
+                                           
                                         <?php } else { ?>
-                                            <div class="title">
-                                                <h2><?php echo $LanguageInstance->get('pending_tandems') ?></h2>
-                                                <a href="selectUserAndRoom.php" class="tandem-btn-secundary btn-reload"><i class="icon"></i><?php echo $LanguageInstance->get('reload_pending') ?></a>
-                                            </div>
-                                            <table id="statistics1" class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="width:30%"><?php echo $LanguageInstance->get('user_guest') ?></th>
-                                                        <th style="width:25%"><?php echo $LanguageInstance->get('exercise') ?></th>
-                                                        <th style="width:25%"><?php echo $LanguageInstance->get('date') ?></th>
-                                                        <th style="width:20%"><?php echo $LanguageInstance->get('state') ?></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
+                                            
+                                          
                                                     <?php
                                                     $ai = 0;
                                                     foreach ($pending_invitations as $tandem) {
                                                         $ai++;
                                                         ?>
-                                                        <tr>
-                                                            <td><?php echo $tandem['surname'] . ', ' . $tandem['firstname'] ?></td>
-                                                            <td><?php echo $tandem['name'] ?></td>
-                                                            <td><?php echo $tandem['created'] ?></td>
+                                                       
+                                                          
                                                             <?php
                                                             $time2Expire = 60;
                                                             if ((time() - strtotime($tandem['created'])) >= $time2Expire) {
                                                                 ?>
-                                                                <td><a href="#" title="<?php echo $LanguageInstance->get('go') ?>" class="tandem-btnout"><?php echo $LanguageInstance->get('caducado') ?></a></td>
+                                                              
             <?php } else { ?>
                                                         <script>
                                                                             setExpired(<?php echo $time2Expire; ?>);
@@ -1069,7 +995,7 @@ jQuery(document).ready(function(){
                                                         //if(i<10) t ="0"+i;
                                                         //else t = i;
                                                                     for (var iT = 0; iT <=<?php echo $ai; ?>; iT++){
-                                                        //$("#timer2expired"+iT).html("<?php echo $LanguageInstance->get('accept') ?> 00:"+t);
+                                                       
                                                         //if(i<=1 || isNowOn==1){
                                                                     $("#timer2expired" + iT).removeClass("tandem-btn").addClass("tandem-btnout");
                                                                             $("#timer2expired" + iT).html("<?php echo $LanguageInstance->get('caducado') ?>");
@@ -1080,14 +1006,13 @@ jQuery(document).ready(function(){
                                                                             }
                                                                     }
                                                         </script>
-                                                        <td><a id="timer2expired<?php echo $ai; ?>" href="accessTandem.php?id=<?php echo $tandem['id'] ?>" title="<?php echo $LanguageInstance->get('go') ?>" class="tandem-btn"><?php echo $LanguageInstance->get('accept') ?></a></td>
+                                                       
                                                         <?php
                                                     }
                                                     ?>
-                                                    </tr>
+                                                  
                                         <?php } ?>
-                                                </tbody>
-                                            </table>
+                                               
                                     <?php } ?>	
                                     </div>
                                     <?php /*
@@ -1136,11 +1061,7 @@ jQuery(document).ready(function(){
                                           }
                                           </div>
                                          */ ?>
-                                        <div class="clear">
-                                            <input type="submit" name="reload" onclick="Javascript:canviaAction('');" value="<?php echo $LanguageInstance->get('refresh') ?>" />
-                                            <input type="submit" name="showTandem" onclick="Javascript:canviaAction('show');" value="<?php echo $LanguageInstance->get('activity_log') ?>" />
-                                            <input type="submit" name="showTandem" onclick="Javascript:canviaAction('exercises');" value="<?php echo $LanguageInstance->get('mange_exercises_tandem') ?>" />
-                                        </div>
+                                      
                                         <?php } //is instructor ?>
 
                                     <div class="clear">

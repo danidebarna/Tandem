@@ -96,8 +96,8 @@ and open the template in the editor.
     
 }
 #logo{
-    margin-top:60px;
-    
+    margin-top:48px;
+    right: -29px !important;
 }
 
 /*MODAL*/
@@ -248,4 +248,23 @@ h3.secundary-title{
 
 .waitingImagePosition{
     margin-left:75px;
+}
+
+/*TABLAS*/
+
+table.table {
+    background: url("../img/ln_dot_h.gif") repeat-x scroll 0 100% #fff;
+    border: 0 none;
+    border-collapse: collapse;
+    margin: 0.5em 0 1.5em;
+    max-width: 30% !important;
+    width: 30%;
+}
+
+table td{
+    border: #1e2d1c dotted 5px;
+    border-left-width: 0.1em !important;
+    border-right-width: 0.1em !important;
+    border-style:dotted;
+    
 }
