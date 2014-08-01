@@ -495,7 +495,13 @@ if (isset($_SESSION[TANDEM_COURSE_FOLDER])) $path = $_SESSION[TANDEM_COURSE_FOLD
 				hideText();
 				//20121005 - abertranb - Go back to the selectUserAndRomm and disble onbeforeunload message
 				salir = 1;
-				setTimeout("document.location.href='selectUserAndRoom.php'",250);
+                                
+                            <?php if ($_SESSION[USE_WAITING_ROOM]) { ?>
+				setTimeout("document.location.href='tandemRoom.php'",250);
+                            <?php  } else {?>
+                                setTimeout("document.location.href='selectUserAndRoom.php'",250);
+                                 <?php  } ?>
+				
 				//END
 			}
 //hide all kind of stuff in page

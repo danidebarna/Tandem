@@ -22,7 +22,7 @@ $course_id = isset($_SESSION[COURSE_ID]) ? $_SESSION[COURSE_ID] : false;
 $use_waiting_room = isset($_SESSION[USE_WAITING_ROOM]) ? $_SESSION[USE_WAITING_ROOM] : false;
 
 
-//$_SESSION[LANG] = 'es_ES';
+
 
 
 require_once dirname(__FILE__) . '/classes/IntegrationTandemBLTI.php';
@@ -144,7 +144,7 @@ if (!$user_obj || !$course_id) {
                 /*
                 VARIABLES K SE TENDRAN DE MODIFICAR !!!
                 */
-               $languageURL = $_GET['localLanguage'];
+               //$languageURL = $_GET['localLanguage'];
             
             ?>
             
@@ -462,11 +462,7 @@ jQuery(document).ready(function(){
                 }).done(function(data){
                     console.log(data);
                 }); 
-                
-                
-                
             }
-              
               
             function getWaitingTandemRoom(exercise_id,only_exercise_id){
                 //6%2FTandemXWikiadmin060220131529&userID=1
@@ -503,7 +499,7 @@ jQuery(document).ready(function(){
                 $.ajax({
                     data:{ 
                             language: "<?php echo $lang = $_SESSION[LANG]; ?>", 
-                            localLanguageURI: "<?php echo $_GET['localLanguage']; ?>",
+                            localLanguageURI: "",
                             courseID: "<?php echo $course_id; ?>" 
                         },
                     url: "updateWiewportWaitingTandemRoom.php",
@@ -515,7 +511,7 @@ jQuery(document).ready(function(){
                   
                     var data = data;
                     
-                    var localLanguage = "<?php echo $_GET['localLanguage']; ?>"; 
+                    var localLanguage = ""; 
 
                    
                     sumatorioWaitingTable = '';
@@ -537,9 +533,10 @@ jQuery(document).ready(function(){
                         var extra_exercise = data[i]['relative_path'] && data[i]['relative_path'].length > 0 ? data[i]['relative_path'].replace("/","").replace("\\","")+ '/' : '';
                         
                         var name_xml_file = extra_exercise + data[i]['name_xml_file'];
-                                                   
+                          
+                         <?php $userLanguageFinal = $_SESSION[LANG]; ?>
                         
-                        if((localLanguage == language) || number_user_waiting==0){
+                        if((language == '<?php echo $userLanguageFinal; ?>' ) || number_user_waiting==0){
                             //waiting
                             //alert('primera opcio');
                             if (number_user_waiting !=0 ){
@@ -555,7 +552,7 @@ jQuery(document).ready(function(){
                             //ajax 
                             //mostrarem dades en un jquery dialog
                         }
-                        if(localLanguage != language && number_user_waiting>0){
+                        if(language != '<?php echo $userLanguageFinal; ?>' && number_user_waiting>0){
                         
                             sumatorioTandemTable += '<tr><td><input class="exButtonTandem" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" id="exercise-'+id_exercise+'" data-is-tandem="true" data-id-exercise="'+name_xml_file+'"  value="'+name+'"></td><td><label style="color:black;" class="common-waiting-tandem_users tandem-users-more-one">'+number_user_waiting+'</label></td></tr>';
                         }
@@ -711,7 +708,7 @@ jQuery(document).ready(function(){
         function tandemStandBy(){
 		if ($("#waitingUser").length > 0){
 			$.modal($('#waitingUser'));
-			//accionTimer();
+                        modalTimer2();
 		}
 	}
         
@@ -765,27 +762,53 @@ jQuery(document).ready(function(){
             restFromWaitingRoomAndTandem(); //we rest from the waiting room and the tandem room
         }
         
-         var counterW = false;
-         var countW = <?php echo WAITING_TIME; ?>;
-         var countCurrentW = countW;
-        function modalTimer() {
+        var counterW = false;
+        var countW = <?php echo WAITING_TIME; ?>;
+        var countCurrentW = countW;
+         
+        function modalTimer(){
             countCurrentW = countW;
             counterW = setInterval(timerW, 1000); //1000 will  run it every 1 second
-
         }
         
-         function timerW(){
+        function timerW(){
            
-         countCurrentW=countCurrentW-1;
-         if (countCurrentW <= 0)
-         {
-             
-             closeModalAndCountAgain();
-             return;
-         }
+            countCurrentW=countCurrentW-1;
+            if (countCurrentW <= 0)
+            {
 
-         document.getElementById("timerWaiting").innerHTML=countCurrentW + " secs"; // watch for spelling
+                closeModalAndCountAgain();
+                return;
+            }
+
+            document.getElementById("timerWaiting").innerHTML=countCurrentW + " secs"; // watch for spelling
          }
+        
+        
+        var counterT = false;
+        var countT = <?php echo TANDEM_TIME; ?>;
+        var countCurrentT = countT;
+         
+         
+        function modalTimer2(){
+            countCurrentT = countT;
+            counterT = setInterval(timerT, 1000); //1000 will  run it every 1 second
+        }
+        
+        function timerT(){
+           
+            countCurrentT=countCurrentT-1;
+            if (countCurrentT <= 0)
+            {
+                clearInterval(counterT);
+                $.modal.close(); 
+            }
+            document.getElementById("timerTandem").innerHTML=countCurrentT + " secs"; // watch for spelling
+            
+        }
+        
+        
+        
         
         
         function timeStop(){
@@ -895,10 +918,11 @@ jQuery(document).ready(function(){
                             <!--
                             <p><a href='#' onclick="StartTandemTimer();return false;" id="lnk-start-task" class="btn">Empezamos con las pruebas del Timer</a></p>
                             -->
+                            
+                            <!-- WAITING MODAL -->
+                            
                             <div id="modal-start-task" class="modal">
-                                <script>
-                                         
-                                </script>
+                              
                                 <body id="home_" style="background-color:#FFFFFF;">
                                 <div>
                                         <img id="home" src="images/final1.png" width="310" height="85" alt="" />
@@ -919,6 +943,8 @@ jQuery(document).ready(function(){
                             </div>
                             
                             
+                            <!-- TANDEM MODAL -->
+                            
                             <div id="waitingUser" class="modal">
                                 <script>
                                          
@@ -936,7 +962,7 @@ jQuery(document).ready(function(){
                                   <img id="home" src="css/images/loading_1.gif" width="150" height="150" alt="" />
                                 </div>
                               
-                                   
+                                <div id="timerTandem" style="text-align:center;"></div>     
                                     
                             </body>
                             </div>
@@ -1010,7 +1036,7 @@ jQuery(document).ready(function(){
                             
                             
                                 <?php
-                                //echo '<div><h1>Lenguaje de la sesion: ' . $lang = $_SESSION[LANG] . '</h1></div>' . '<br>';
+                                echo '<div><h2>Lenguaje: ' . $lang = $_SESSION[LANG] . '</h2></div>' . '<br>';
                                // echo 'ID del Curso: ' . $course_id . '<br>';
                                 //echo 'ID Usuario: ' . $user_obj->id . '<br>';
                                 //print_r($array_exercises);

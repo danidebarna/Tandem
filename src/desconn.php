@@ -14,6 +14,7 @@ $id_user_host = $user_obj->id;
 $id_course = $_SESSION[COURSE_ID];
 $id_user_guest = $_SESSION[ID_USER_GUEST];
 
+
 function setinTandemStatus($user,$id_course,$status){
 	$gestorBD = new GestorBD();
 	$val = $gestorBD->set_userInTandem($user,$id_course,$status);
@@ -32,5 +33,8 @@ setinTandemStatus($id_user_guest,$id_course,0);
 $dataHour = '0000-00-00 00:00:00';
 setlastAccessTandemStatus($id_user_host,$id_course,$dataHour);
 setlastAccessTandemStatus($id_user_guest,$id_course,$dataHour);
+
+
+
 
 ?>
