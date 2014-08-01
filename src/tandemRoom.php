@@ -446,6 +446,28 @@ jQuery(document).ready(function(){
             // echo '<div>' . $lang = $_SESSION[LANG] . '</div>';
               //                          echo $course_id;
               //                          echo $user_obj->id;
+              
+              
+              
+            function restFromWaitingRoomAndTandem(){
+                     $.ajax({
+                    data:{ 
+                            'language': "<?php echo $_SESSION[LANG]; ?>", 
+                            'courseID': "<?php echo $course_id; ?>",
+                            'userID':  "<?php echo $user_obj->id; ?>"
+                        },
+                    url: "differentRequests.php",
+                    type: "POST",
+                    dataType: "html",
+                }).done(function(data){
+                    console.log(data);
+                }); 
+                
+                
+                
+            }
+              
+              
             function getWaitingTandemRoom(exercise_id,only_exercise_id){
                 //6%2FTandemXWikiadmin060220131529&userID=1
                 
@@ -495,13 +517,12 @@ jQuery(document).ready(function(){
                     
                     var localLanguage = "<?php echo $_GET['localLanguage']; ?>"; 
 
-                    sumatorioWaiting = '';
+                   
                     sumatorioWaitingTable = '';
-                    //sumatorioWaiting += '<li class="lineWT title-waiting">WAITING</li>';
+                   
                     
-                    sumatorioTandem = '';
                     sumatorioTandemTable = '';
-                    //sumatorioTandem += '<li class="lineWT title-tandem">TANDEM</li>';
+                    
                     
                     for (var i in data){
                         
@@ -522,12 +543,12 @@ jQuery(document).ready(function(){
                             //waiting
                             //alert('primera opcio');
                             if (number_user_waiting !=0 ){
-                               // sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+ '</label></li>';
+                             
                                 sumatorioWaitingTable +='<td><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"></td><td><label style="color:black;" class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+ '</label></td>';
                             
                             }
                             if (number_user_waiting == 0 || number_user_waiting == null){
-                                //sumatorioWaiting += '<li class="lineWT"><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"><label class="common-waiting-tandem_users waiting-users-zero">'+number_user_waiting+'</label></li>';
+                            
                                 sumatorioWaitingTable +='<tr><td><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"></td><td><label style="color:red;" class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+ '</label></td></tr>';
                             }
                             
@@ -536,14 +557,12 @@ jQuery(document).ready(function(){
                         }
                         if(localLanguage != language && number_user_waiting>0){
                         
-                            //sumatorioTandem += '<li class="lineWT"><input class="exButtonTandem" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" id="exercise-'+id_exercise+'" data-is-tandem="true" data-id-exercise="'+name_xml_file+'"  value="'+name+'"><label class="common-waiting-tandem_users tandem-users-more-one">'+number_user_waiting+'</label></li>';
                             sumatorioTandemTable += '<tr><td><input class="exButtonTandem" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" id="exercise-'+id_exercise+'" data-is-tandem="true" data-id-exercise="'+name_xml_file+'"  value="'+name+'"></td><td><label style="color:black;" class="common-waiting-tandem_users tandem-users-more-one">'+number_user_waiting+'</label></td></tr>';
                         }
                         //alert(id_exercise+'-'+name+'-'+language+'-'+number_user_waiting);
                         
                     }
-                    $('.tandem-room-left ul').html(sumatorioWaiting);
-                    $('.tandem-room-right ul').html(sumatorioTandem);
+                  
                     
                     $('.leftTable').html(sumatorioWaitingTable);
                     $('.rightTable').html(sumatorioTandemTable);
@@ -700,6 +719,7 @@ jQuery(document).ready(function(){
             if ($("#modal-start-task").length > 0){
                // alert(urlToRedirect);
                // alert(tandem_id);
+                modalTimer();
                 clearInterval(intervalCheck);
                 var TimerSUAR = 1000;
                 intervalCheckHavePartner = setInterval(function(){
@@ -718,6 +738,7 @@ jQuery(document).ready(function(){
 						//$("#info-block").append("<div class='alert-inside'><i class='icon'></i><h3><?php echo $LanguageInstance->get('just_been_invited');?> <em>"+nameuser_txt+"</em> <?php echo $LanguageInstance->get('exercise');?>: <em>"+exercise_txt+"</em> </h3><a id='startNowBtn' href=\"accessTandem.php?id="+id_txt+"\" class='tandem-btn'><?php echo $LanguageInstance->get('accept');?></a></div>");
 					//	setExpiredNow(60);
 						clearInterval(intervalCheckHavePartner);
+                                               
 				  	}
 				  },
 				  error: function(){
@@ -729,14 +750,42 @@ jQuery(document).ready(function(){
 			});
 		},TimerSUAR);	
                 $('#modal-start-task').modal( {onClose: function () {
-                   beginningOneMoreTime();
-                    $.modal.close(); // must call this!
+                  closeModalAndCountAgain();
                 }})
                 
             }
         }
         
+        function closeModalAndCountAgain() {
+            if (counterW) {
+             clearInterval(counterW);   
+            }
+            beginningOneMoreTime();
+            $.modal.close(); // must call this!
+            restFromWaitingRoomAndTandem(); //we rest from the waiting room and the tandem room
+        }
         
+         var counterW = false;
+         var countW = <?php echo WAITING_TIME; ?>;
+         var countCurrentW = countW;
+        function modalTimer() {
+            countCurrentW = countW;
+            counterW = setInterval(timerW, 1000); //1000 will  run it every 1 second
+
+        }
+        
+         function timerW(){
+           
+         countCurrentW=countCurrentW-1;
+         if (countCurrentW <= 0)
+         {
+             
+             closeModalAndCountAgain();
+             return;
+         }
+
+         document.getElementById("timerWaiting").innerHTML=countCurrentW + " secs"; // watch for spelling
+         }
         
         
         function timeStop(){
@@ -862,6 +911,10 @@ jQuery(document).ready(function(){
                                 <div class="waitingImagePosition">
                                   <img id="home" src="css/images/loading_1.gif" width="150" height="150" alt="" />
                                 </div>
+                                
+                                                      
+                                                  
+                             <div id="timerWaiting" style="text-align:center;"></div>         
                             </body>
                             </div>
                             
@@ -882,6 +935,9 @@ jQuery(document).ready(function(){
                                 <div class="waitingImagePosition">
                                   <img id="home" src="css/images/loading_1.gif" width="150" height="150" alt="" />
                                 </div>
+                              
+                                   
+                                    
                             </body>
                             </div>
                             
@@ -982,31 +1038,27 @@ jQuery(document).ready(function(){
                                                             if ((time() - strtotime($tandem['created'])) >= $time2Expire) {
                                                                 ?>
                                                               
-            <?php } else { ?>
-                                                        <script>
-                                                                            setExpired(<?php echo $time2Expire; ?>);
-                                                                            var intTimer;
-                                                                            function setExpired(i){
-                                                                                intTimer = setTimeout("getTime(" + i + ");", 1000);
-                                                                                    }
-                                                                    function getTime(i){
-                                                        //var t;
-                                                        //i--;
-                                                        //if(i<10) t ="0"+i;
-                                                        //else t = i;
+                                                      <?php }else { ?>
+                                                            <script>
+                                                                setExpired(<?php echo $time2Expire; ?>);
+                                                                var intTimer;
+                                                                
+                                                                function setExpired(i){
+                                                                    intTimer = setTimeout("getTime(" + i + ");", 1000);
+                                                                }
+                                                                
+                                                                function getTime(i){
+                                                       
                                                                     for (var iT = 0; iT <=<?php echo $ai; ?>; iT++){
+                                                                        
+                                                                        $("#timer2expired" + iT).removeClass("tandem-btn").addClass("tandem-btnout");
+                                                                        $("#timer2expired" + iT).html("<?php echo $LanguageInstance->get('caducado') ?>");
+                                                                        $("#timer2expired" + iT).attr("href", "#")
+                                                                        clearInterval(intTimer);
                                                        
-                                                        //if(i<=1 || isNowOn==1){
-                                                                    $("#timer2expired" + iT).removeClass("tandem-btn").addClass("tandem-btnout");
-                                                                            $("#timer2expired" + iT).html("<?php echo $LanguageInstance->get('caducado') ?>");
-                                                                            $("#timer2expired" + iT).attr("href", "#")
-                                                                            clearInterval(intTimer);
-                                                        //}
-                                                        //else setExpired(i);
-                                                                            }
-                                                                    }
+                                                                        }
+                                                                }
                                                         </script>
-                                                       
                                                         <?php
                                                     }
                                                     ?>

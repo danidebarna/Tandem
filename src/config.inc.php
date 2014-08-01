@@ -17,3 +17,11 @@ define('BD_USERNAME', 'tandem');
 define('BD_PASSWORD', 'tresipunt');
 define('PROTECTED_FOLDER', dirname(__FILE__).'/xml');
 define('GOOGLE_ANALYTICS_ID', '');
+
+
+/*Paràmetros de tiempo para la waiting Tandem Room*/
+
+
+define('WAITING_TIME',60);
+define('TANDEM_TIME',60);
+

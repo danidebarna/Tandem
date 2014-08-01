@@ -1429,6 +1429,36 @@ class GestorBD {
         return $ok;
     }
     
+    
+    
+    function userIsNoWaitingMore($language,$courseID,$userID)
+    {
+        $sqlSelect = 'select wr.id_exercise from waiting_room as wr'
+                . ' inner join waiting_room_user as wru on wru.id_waiting_room = wr.id'
+                . ' where wr.language = '.$this->escapeString($language).' and wr.id_course = '.$courseID.' and wru.id_user = '.$userID.' and wr.number_user_waiting > 0 limit 0,1 ';
+        
+        $resultSelect = $this->consulta($sqlSelect); 
+        
+        if ($this->numResultats($resultSelect) > 0){
+            
+            $resultSelect = $this->obteComArray($resultSelect);
+            
+            $id_exercise = $resultSelect[0]['id_exercise'];
+         
+        }
+        
+        $result = $this->tandem_exercise($language, $courseID, $id_exercise, $userID);
+        
+        $sqlDelete = 'delete from tandem where id_exercise = '.$id_exercise.' and id_course = '.$courseID.' and id_user_host= '.$userID.' and id_user_guest = -1';
+       
+        $resultDelete = $this->consulta($sqlDelete);    
+
+        return $sqlDelete;
+    }
+    
+    
+    
+    
     /*
     public function insertUserIntoRoom($language, $idCourse, $idExercise, $idNumberUserWaiting, $idUser) {
         $result = false;
