@@ -1366,7 +1366,7 @@ class GestorBD {
      * @param type $number_user_to_add_or_remove
      * @return boolean
      */
-    private function addOrRemoveUserToWaitingRoom($id_waiting_room, $number_user_to_add_or_remove) {
+    private function addOrRemoveUserToWaitingRoom($id_waiting_room, $number_user_to_add_or_remove,$paramSpecial,$userID) {
         $ok = false;
         //1. Check in waiting room
         $sql = 'Select * FROM `waiting_room` WHERE `id` = ' . $this->escapeString($id_waiting_room);
@@ -1387,14 +1387,28 @@ class GestorBD {
                         . '' . $this->escapeString($id_exercise) . ', ' . $this->escapeString($number_user_waiting_old) . ', ' . $this->escapeString($created) . ', NOW())';
                 if ($this->consulta($sqlInsert)) {
                     //3. Delete from waiting_room_user
-                    $sqlDelete = 'DELETE FROM `waiting_room` WHERE `id` = ' . $this->escapeString($id_waiting_room);
-                    if ($this->consulta($sqlDelete)) {
-                        $ok = true;
-                    }
+                        if($paramSpecial==false){
+                            
+                            $sqlDelete = 'DELETE FROM `waiting_room` WHERE `id` = ' . $this->escapeString($id_waiting_room);
+                            if ($this->consulta($sqlDelete)) {
+                                $ok = true;
+                            }
+                            
+                        }
+                       
+                        
                 }
             } else {
+                
+                
+                
                 $ok = true;
             }
+            if($paramSpecial==true){
+                    $sqlDelete = 'DELETE FROM `waiting_room_user` WHERE `id_waiting_room` = '.$id_waiting_room.' and `id_user` = '.$userID;
+                    $this->consulta($sqlDelete);
+            }
+          
         }
         return $ok;
     }
@@ -1445,14 +1459,35 @@ class GestorBD {
             
             $id_exercise = $resultSelect[0]['id_exercise'];
          
+            
+            $sqlSelect = 'select number_user_waiting from waiting_room where language = '.$this->escapeString($language).' and id_course = '.$courseID.' and id_exercise =  '.$id_exercise.' limit 0,1 ';
+        
+            $resultSelect = $this->consulta($sqlSelect); 
+            
+            if ($this->numResultats($resultSelect) > 0){
+            
+                $resultSelect = $this->obteComArray($resultSelect);
+
+                $number_user_waiting = $resultSelect[0]['number_user_waiting'];
+
+                if($number_user_waiting == 1){
+
+                    $sqlDelete2 = 'DELETE FROM `waiting_room` WHERE id_course = '.$courseID.' and id_exercise =  '.$id_exercise;
+                    $this->consulta($sqlDelete2);
+
+                }
+            }
+            
         }
         
-        $result = $this->tandem_exercise($language, $courseID, $id_exercise, $userID);
+        $result = $this->tandem_exercise($language, $courseID, $id_exercise, $userID,true);
         
         $sqlDelete = 'delete from tandem where id_exercise = '.$id_exercise.' and id_course = '.$courseID.' and id_user_host= '.$userID.' and id_user_guest = -1';
        
         $resultDelete = $this->consulta($sqlDelete);    
 
+        
+        
         return $sqlDelete;
     }
     
@@ -1525,7 +1560,7 @@ class GestorBD {
             
             $waiting_room_id = $resultSelect[0]['id'];
             
-            $sql= "UPDATE waiting_room SET number_user_waiting = number_user_waiting + 1  WHERE id = ".$waiting_room_id;
+            $sql= "UPDATE waiting_room SET number_user_waiting = number_user_waiting + 1  WHERE id = ".$waiting_room_id." and id_course = ".$courseID." and id_exercise = ".$exerciseID;
             $ok = $this->consulta($sql);
             
         }else{
@@ -1544,7 +1579,7 @@ class GestorBD {
     }
     
    
-    public function tandem_exercise($language, $courseID, $exerciseID,$idUser)
+    public function tandem_exercise($language, $courseID, $exerciseID,$idUser,$paramSpecial=false)
     {
         $ok = false;
 
@@ -1561,7 +1596,8 @@ class GestorBD {
             $sqlPrueba = "UPDATE waiting_room SET number_user_waiting = number_user_waiting - 1  WHERE id_course = ".$courseID." and id_exercise = ".$exerciseID;
             $ok = $this->consulta($sqlPrueba);
             
-            $result = $this->addOrRemoveUserToWaitingRoom($waiting_room_id, -1);
+           
+            $result = $this->addOrRemoveUserToWaitingRoom($waiting_room_id, -1,$paramSpecial,$idUser);
             
         }else{
            
@@ -1611,13 +1647,14 @@ class GestorBD {
         $tandem_waiting_room_other_lang_offered = $this->getWaitingTandemRoom($idCourse, $other_language, $onlyExID);
         $tandem_waiting_room = true;
         if (!$tandem_waiting_room_other_lang_offered) {
-            //2nd if not we get if my language offering
+            //2nd if not we get if my language offering (si estem oferint del nostre propi )
             $tandem_waiting_room = $this->getWaitingTandemRoom($idCourse, $language, $onlyExID);
+            
         }
         
         $ok = false;
         
-        if (!$tandem_waiting_room){
+        if (!$tandem_waiting_room||count($tandem_waiting_room)>0){
             
             //3.-insertem usuari en la waiting room
            
@@ -1660,7 +1697,7 @@ class GestorBD {
         
         
         $where = '';
-        
+        $limit = '';
       
         if ($language){
             $where .= ' and wr.language = '.$this->escapeString($language);
@@ -1668,13 +1705,14 @@ class GestorBD {
       
         if ($id_exercise>0){
             $where .= ' and wr.id_exercise = '.$this->escapeString($id_exercise);
+            $limit .= ' limit 0,1';
         }
         
         $sql="SELECT ce.id_exercise, e.name, e.relative_path, e.name_xml_file, wr.language, coalesce(wr.number_user_waiting,0) as number_user_waiting FROM `course_exercise` as ce 
             inner join exercise as e on ce.id_exercise = e.id
             left join waiting_room as wr on ce.id_course = ce.id_course and ce.id_exercise = wr.id_exercise and wr.number_user_waiting>0
             WHERE ce.id_course = ".$courseID." ".$where." order by ce.id_exercise, wr.language";
-       
+       //.$limit
        
        $result = $this->consulta($sql);
         if ($this->numResultats($result) > 0) {

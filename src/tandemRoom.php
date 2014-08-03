@@ -580,6 +580,9 @@ jQuery(document).ready(function(){
                                 timeStop(); //Stopping the timebar
                                 //startTask(); //We show the connexion div with the charging image
                                 
+                                //Check if is waiting or tandem and execute his functions()
+                                getWaitingTandemRoom($(this).data("id-exercise"),$(this).data("id-number")); //Passamos por ajax el id del ejercicio a la base de datos 
+                                
                                 //alert($(this).data("id-exercise"));
                                 if ($(this).data("is-tandem")==true){
                                     //we call charging div !!!
@@ -589,9 +592,7 @@ jQuery(document).ready(function(){
                                     top.document.getElementById('roomStatus').innerHTML="<?php echo $LanguageInstance->get('Connecting...')?>";
                                     setTimeout("alertMsg",30000);
                                 }
-                                //afegim + 1 o restarem -1 ...
-                                getWaitingTandemRoom($(this).data("id-exercise"),$(this).data("id-number")); //Passamos por ajax el id del ejercicio a la base de datos 
-                                
+                               
                                 
                                 //conexio tandem
                                 if ($(this).data("is-tandem")==false){
