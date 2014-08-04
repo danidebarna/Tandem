@@ -41,7 +41,7 @@ $oJson=json_encode($mWT,JSON_FORCE_OBJECT);
 //echo $oJson;
 
 
-$uniqueArray = $oWiewport->getWaitingTandemRoom($courseID,false,0);
+$uniqueArray = $oWiewport->getWaitingTandemRoomTable($courseID);
 
 
 $oJsonUnique = json_encode($uniqueArray,JSON_FORCE_OBJECT);

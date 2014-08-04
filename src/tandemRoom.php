@@ -146,6 +146,8 @@ if (!$user_obj || !$course_id) {
                 */
                //$languageURL = $_GET['localLanguage'];
             
+                //$_SESSION[LANG] = 'es_ES';
+            
             ?>
             
             
@@ -1039,7 +1041,7 @@ jQuery(document).ready(function(){
                                 <?php
                                 echo '<div><h2>Lenguaje: ' . $lang = $_SESSION[LANG] . '</h2></div>' . '<br>';
                                // echo 'ID del Curso: ' . $course_id . '<br>';
-                                //echo 'ID Usuario: ' . $user_obj->id . '<br>';
+                                echo 'ID Usuario: ' . $user_obj->id . '<br>';
                                 //print_r($array_exercises);
                                 echo '<br>';
                                 ?>
