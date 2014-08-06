@@ -779,6 +779,17 @@ jQuery(document).ready(function(){
             }
         }
         
+        function closeModalAndCountAgainTandem() {
+            if (counterT){
+             clearInterval(counterT);   
+            }
+            beginningOneMoreTime();
+            $.modal.close(); // must call this!
+           
+        }
+        
+        
+        
         var counterW = false;
         var countW = <?php echo WAITING_TIME; ?>;
         var countCurrentW = countW;
@@ -819,8 +830,10 @@ jQuery(document).ready(function(){
             countCurrentT=countCurrentT-1;
             if (countCurrentT <= 0)
             {
-                clearInterval(counterT);
-                $.modal.close(); 
+                //clearInterval(counterT);
+                //$.modal.close(); 
+                closeModalAndCountAgainTandem();
+                return;
             }
             document.getElementById("timerTandem").innerHTML=countCurrentT + " secs"; // watch for spelling
             
