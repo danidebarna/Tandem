@@ -146,7 +146,7 @@ if (!$user_obj || !$course_id) {
                 */
                //$languageURL = $_GET['localLanguage'];
             
-                //$_SESSION[LANG] = 'es_ES';
+               // $_SESSION[LANG] = 'es_ES';
             
             ?>
             

@@ -1729,21 +1729,14 @@ class GestorBD {
                 $id_waiting_room= $user_tandem_host[0]['id_waiting_room'];
                 
                 
-                
-                
-               
-                
-                //Delete user from waiting_user_room
-                //$sqlDeleteWR = 'delete from waiting_room_user where id_waiting_room = '.$id_waiting_room.' and id_user = '.$id_user_host;
-                //$resultDeleteWR = $this->consulta($sqlDeleteWR); 
-                
                  //insert us on tandem
                 $resultUpdate = $this->updateUserGuestTandem($id_tandem,$idUser);
                 
-                
                 //$this->userIsNoWaitingMore($language,$idCourse,$idUser,$type='assigned',$id_tandem);
                 
-                $ok = $this->tandem_exercise($language, $idCourse, $onlyExID);
+                $this->userIsNoWaitingMore($other_language,$idCourse,$id_user_host,$type='assigned',$id_tandem);
+                
+                //$ok = $this->tandem_exercise($language, $idCourse, $onlyExID);
             }
            
         }
