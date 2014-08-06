@@ -451,12 +451,13 @@ jQuery(document).ready(function(){
               
               
               
-            function restFromWaitingRoomAndTandem(){
-                     $.ajax({
+            function restFromWaitingRoomAndTandem(paramString){
+                    $.ajax({
                     data:{ 
                             'language': "<?php echo $_SESSION[LANG]; ?>", 
                             'courseID': "<?php echo $course_id; ?>",
-                            'userID':  "<?php echo $user_obj->id; ?>"
+                            'userID':  "<?php echo $user_obj->id; ?>",
+                            'typeClose': paramString
                         },
                     url: "differentRequests.php",
                     type: "POST",
@@ -562,7 +563,6 @@ jQuery(document).ready(function(){
                         
                     }
                   
-                    
                     $('.leftTable').html(sumatorioWaitingTable);
                     $('.rightTable').html(sumatorioTandemTable);
                      
@@ -577,7 +577,9 @@ jQuery(document).ready(function(){
                         $(document).ready(function(){
                             $('#exercise-'+id_exercise).on("click",function(){
                                 
-                              
+                                //desactivar botó
+                                $(this).prop("disabled",true);
+                                 
                                 //alert('Hemos seleccionado el ejercicio: '+$(this).data("id-exercise"));
                                 timeStop(); //Stopping the timebar
                                 //startTask(); //We show the connexion div with the charging image
@@ -598,7 +600,7 @@ jQuery(document).ready(function(){
                                 
                                 //conexio tandem
                                 if ($(this).data("is-tandem")==false){
-                                    //alert("executing XML Room");
+                                  //alert("executing XML Room");
                                     var content = getXMLRoom($(this).data("id-exercise"));
                                 }
                                 //alert (content);
@@ -715,8 +717,11 @@ jQuery(document).ready(function(){
 		}
 	}
         
+        var show_message_giveup = true;
+        
         function showWaitingMessage(urlToRedirect, tandem_id){
             if ($("#modal-start-task").length > 0){
+                show_message_giveup = true;
                // alert(urlToRedirect);
                // alert(tandem_id);
                 modalTimer();
@@ -750,19 +755,28 @@ jQuery(document).ready(function(){
 			});
 		},TimerSUAR);	
                 $('#modal-start-task').modal( {onClose: function () {
-                  closeModalAndCountAgain();
+                    if (show_message_giveup) {
+                      //alert('give_up');
+                      closeModalAndCountAgain('give_up');
+                  } else {
+                      restFromWaitingRoomAndTandem('lapsed'); 
+                      //closeModalAndCountAgain('lapsed');
+                      $.modal.close(); // must call this!
+                  }
                 }})
                 
             }
         }
         
-        function closeModalAndCountAgain() {
-            if (counterW) {
+        function closeModalAndCountAgain(paramString) {
+            if (counterW){
              clearInterval(counterW);   
             }
             beginningOneMoreTime();
             $.modal.close(); // must call this!
-            restFromWaitingRoomAndTandem(); //we rest from the waiting room and the tandem room
+            if (show_message_giveup){
+                restFromWaitingRoomAndTandem(paramString); //we rest from the waiting room and the tandem room
+            }
         }
         
         var counterW = false;
@@ -779,8 +793,9 @@ jQuery(document).ready(function(){
             countCurrentW=countCurrentW-1;
             if (countCurrentW <= 0)
             {
-
-                closeModalAndCountAgain();
+                //alert('lapsed');
+                show_message_giveup=false;
+                closeModalAndCountAgain('lapsed');
                 return;
             }
 
