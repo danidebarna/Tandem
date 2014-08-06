@@ -802,6 +802,7 @@ jQuery(document).ready(function(){
             document.getElementById("timerWaiting").innerHTML=countCurrentW + " secs"; // watch for spelling
          }
         
+        /*************/
         
         var counterT = false;
         var countT = <?php echo TANDEM_TIME; ?>;
