@@ -5,6 +5,8 @@
  * and open the template in the editor.
  */
 
+error_reporting(0);
+
 require_once dirname(__FILE__) . '/classes/lang.php';
 require_once dirname(__FILE__) . '/classes/constants.php';
 require_once dirname(__FILE__) . '/classes/gestorBD.php';
@@ -92,10 +94,12 @@ if (!$user_obj || !$course_id) {
           
             
         } else { //Mirem de carregar per OKI
-              echo 'Carreguem per OKI'.'<br>';
+             // echo 'Carreguem per OKI'.'<br>';
             
             $okibusPHP_components = $_SESSION[OKIBUSPHP_COMPONENTS];
+           // var_dump($okibusPHP_components);
             $okibusPHP_okibusClient = $_SESSION[OKIBUSPHP_OKIBUSCLIENT];
+           //  var_dump($okibusPHP_okibusClient);
             putenv(OKIBUSPHP_COMPONENTS . '=' . $okibusPHP_components);
             putenv(OKIBUSPHP_OKIBUSCLIENT . '=' . $okibusPHP_okibusClient);
 //Pel require d'autehtnication ja carrega les propietats
@@ -114,7 +118,7 @@ if (!$user_obj || !$course_id) {
   
     
     if ($is_showTandem && $user_selected) {
-        echo "EN PRINCIPI NO ENTREM!!!!".'<br>';
+       // echo "EN PRINCIPI NO ENTREM!!!!".'<br>';
         $exercise = isset($_POST['room']) ? intval($_POST['room'], 10) : false;
         $user_tandems = $gestorBD->obte_llistat_tandems($course_id, $user_selected, $exercise);
     }
@@ -146,7 +150,7 @@ if (!$user_obj || !$course_id) {
                 */
                //$languageURL = $_GET['localLanguage'];
             
-               // $_SESSION[LANG] = 'es_ES';
+               //$_SESSION[LANG] = 'es_ES';
             
             ?>
             
@@ -238,6 +242,7 @@ jQuery(document).ready(function(){
 					xmlReq.timeout = 100000;
 					xmlReq.overrideMimeType("text/xml");
 			}
+                        alert(url);
 			xmlReq.open("GET", url, true);
 			xmlReq.send(null);
 		}
@@ -250,10 +255,10 @@ jQuery(document).ready(function(){
 			user_selected = $('#user_selected').val();
 			room_temp = $('#room').val();
 			if (user_selected=="" || user_selected=="-1") {
-				//alert("<?php echo $LanguageInstance->get('select_user')?>");
+				alert("<?php echo $LanguageInstance->get('select_user')?>");
 			} else {
 				if (room_temp=="" || room_temp=="-1") {
-					//alert("<?php echo $LanguageInstance->get('select_exercise')?>");
+					alert("<?php echo $LanguageInstance->get('select_exercise')?>");
 				} else {
 					enable_button('');
 					getXMLRoom(room_temp);
@@ -334,7 +339,7 @@ jQuery(document).ready(function(){
 				  }
 			});
 		},TimerSUAR);			
-		<?php //if ($selected_exercise && strlen($selected_exercise)>0){ echo 'getXML();'; }?>
+		<?php if ($selected_exercise && strlen($selected_exercise)>0){ echo 'getXML();'; }?>
 
 
 		canviaAction = function(show) {
@@ -851,56 +856,8 @@ jQuery(document).ready(function(){
                 timeline.start();
         }
         
-        /*XMLRoom*/
         
-        function  getMyXMLRoom(room){
-            
-            processXml = function(){
-			if((xmlReq.readyState	==	4) && (xmlReq.status == 200)){
-				//extract data
-				if (xmlReq.responseXML!=null) {
-					var cad=xmlReq.responseXML.getElementsByTagName('nextType');
-					classOf=cad[0].getAttribute("classOf");
-					numBtns=cad[0].getAttribute("numBtns");
-					numUsers=cad[0].getAttribute("numUsers");
-					nextSample=cad[0].getAttribute("currSample");
-					node=parseInt(cad[0].getAttribute("node"))+1;
-					user_selected=$('#user_selected').val();
-					document.getElementById('roomStatus').innerHTML="";
-                                        $('#idfrm').attr('src','checkRoomUserTandem.php?id_user_guest=-1&nextSample='+nextSample+'&node='+node+'&classOf='+classOf+'&data='+data);
-				} else {
-					$('#roomStatus').html('Error loading exercise '+data+' contact with the administrators');
-				}
-			} else if ((xmlReq.readyState	==	4) && (xmlReq.status == 404)) {
-				$('#roomStatus').html('Exercise '+data+' does not exist');
-			}
-		}
-            
-                var room_2 = room.split("-");
-                room = room.split("_");
-                data = room[0].split("speakApps");
-                data = data[0].split("-");
-
-                data = data[0];//.toUpperCase();
-                var extra_path = '';
-                if (data.indexOf("/")>=0) {
-                        data = data.split("/");
-                        data.indexOf("/");
-                        extra_path = data[0]+"/";
-                        data = data[1];
-                }
-
-                room = room_2[1];
-                var url= "<?php echo $path; ?>"+extra_path+"data"+data+".xml";
-                xmlReq.onreadystatechange = processXml;
-                if(!isIEOk){
-                                xmlReq.timeout = 100000;
-                                xmlReq.overrideMimeType("text/xml");
-                }
-                xmlReq.open("GET", url, true);
-                xmlReq.send(null);
-                        
-        }
+      
          
         </script>
            
@@ -1069,12 +1026,23 @@ jQuery(document).ready(function(){
                             
                                 <?php
                                 echo '<div><h2>Lenguaje: ' . $lang = $_SESSION[LANG] . '</h2></div>' . '<br>';
-                               // echo 'ID del Curso: ' . $course_id . '<br>';
+                                echo 'ID del Curso: ' . $course_id . '<br>';
                                 echo 'ID Usuario: ' . $user_obj->id . '<br>';
                                 //print_r($array_exercises);
                                 echo '<br>';
                                 ?>
+                            
+                            
+                             <?php if ($user_obj->instructor) { ?>
+                            
+                                <div class="clear">
+                                   
+                                    <input type="submit" name="showTandem" onclick="Javascript:canviaAction('exercises');" value="<?php echo $LanguageInstance->get('mange_exercises_tandem')?>" />
+                                </div>
                                 
+                             <?php } ?>
+                            
+                            
                                 <div class="manage-area" style="display:none;">
                                     <div class="clear">
                                         <!--<div id="info-block" class="alert alert-info" style="display:none"></div>-->
@@ -1130,6 +1098,7 @@ jQuery(document).ready(function(){
                                       <p><a href="selectUserAndRoom.php"><?php echo $LanguageInstance->get('reload_pending')?></a></p>
                                       </div>
                                      */ ?>
+                                   	
                                     <?php if ($user_obj->instructor) { ?>
                                         <?php /*
                                           <div class="clear">

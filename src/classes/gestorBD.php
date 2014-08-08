@@ -1302,7 +1302,7 @@ class GestorBD {
      * @param type $id_exercise
      * @return array
      */
-    public function getFirstUserWaiting($id_course,$id_exercise){
+    public function getFirstUserWaiting($id_course,$id_exercise,$otherLanguage){
    
      $sql =' select wru.id_user,wr.id as id_waiting_room, tandem.id from waiting_room_user as wru   
           inner join waiting_room as wr on wru.id_waiting_room = wr.id
@@ -1310,7 +1310,7 @@ class GestorBD {
           and tandem.id_course = wr.id_course and tandem.id_user_host = wru.id_user 
           and coalesce(tandem.finalized,0) = 0 and coalesce(tandem.is_finished,0) = 0
           and tandem.id_user_guest = -1
-          where wr.id_course = '.$id_course.' and wr.id_exercise = '.$id_exercise.'
+          where wr.id_course = '.$id_course.' and wr.id_exercise = '.$id_exercise.' and wr.language = '.$this->escapeString($otherLanguage).' 
           order by wru.created asc 
           limit 0, 1 ';
      
@@ -1721,7 +1721,8 @@ class GestorBD {
             $array=array();
             
             //false $user_tandem_host
-            $user_tandem_host=$this->getFirstUserWaiting($idCourse,$onlyExID);
+            //retorna false !!! i salta ... no fa tandem ... xque?¿
+            $user_tandem_host=$this->getFirstUserWaiting($idCourse,$onlyExID,$other_language);
             if ($user_tandem_host && count($user_tandem_host)>0){
                 
                 $id_user_host = $user_tandem_host[0]['id_user'];

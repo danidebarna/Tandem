@@ -24,7 +24,7 @@ $oWiewport = new GestorBD();
 
 
 
-$ok = $oWiewport->userIsNoWaitingMore($language,$courseID,$userID,$typeClose);
+$ok = $oWiewport->userIsNoWaitingMore($language,$courseID,$userID,$typeClose,$tandemID=0);
 
 
 //print_r($ok);

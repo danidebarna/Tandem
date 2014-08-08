@@ -175,7 +175,7 @@ if (!isset($user_obj) || !isset($course_id) || !isset($course_folder) || !$user_
 
 				<?php /* if($message) echo '<div class="info">'.$message.'</div>'; */ ?>
 				<div id="content">
-					<a href="selectUserAndRoom.php" class="tandem-btn-secundary btn-back"><span>&larr;</span>&nbsp;<?php echo $LanguageInstance->get('back')?></a>
+					<a href="tandemRoom.php" class="tandem-btn-secundary btn-back"><span>&larr;</span>&nbsp;<?php echo $LanguageInstance->get('back')?></a>
 					<div id="logo">
 						<a href="#" title="<?php echo $LanguageInstance->get('tandem_logo')?>"><img src="css/images/logo_Tandem.png" alt="<?php echo $LanguageInstance->get('tandem_logo')?>" /></a>
 					</div>

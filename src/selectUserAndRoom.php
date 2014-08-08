@@ -689,11 +689,13 @@ if (!$user_obj || !$course_id) {
 							}
 						</div>
 						*/ ?>
+                                                    
 						<div class="clear">
 							<input type="submit" name="reload" onclick="Javascript:canviaAction('');" value="<?php echo $LanguageInstance->get('refresh')?>" />
 							<input type="submit" name="showTandem" onclick="Javascript:canviaAction('show');" value="<?php echo $LanguageInstance->get('activity_log')?>" />
 							<input type="submit" name="showTandem" onclick="Javascript:canviaAction('exercises');" value="<?php echo $LanguageInstance->get('mange_exercises_tandem')?>" />
 						</div>	
+                                                    
 						<?php } //is instructor ?>  
 						
 						<div class="clear">
