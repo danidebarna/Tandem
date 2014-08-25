@@ -150,7 +150,7 @@ if (!$user_obj || !$course_id) {
                 */
                //$languageURL = $_GET['localLanguage'];
             
-               //$_SESSION[LANG] = 'es_ES';
+               //$_SESSION[LANG] = 'en_US';
             
             ?>
             
@@ -252,6 +252,7 @@ jQuery(document).ready(function(){
 		
 //get dataROOM.xml params
 		getXML = function(){
+                        alert('dins de getXML');
 			user_selected = $('#user_selected').val();
 			room_temp = $('#room').val();
 			if (user_selected=="" || user_selected=="-1") {
@@ -549,7 +550,7 @@ jQuery(document).ready(function(){
                             //alert('primera opcio');
                             if (number_user_waiting !=0 ){
                              
-                                sumatorioWaitingTable +='<td><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"></td><td><label style="color:black;" class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+ '</label></td>';
+                                sumatorioWaitingTable +='<tr><td><input class="exButtonWaiting" type="button" name="exercise-'+id_exercise+'" data-id-number="'+id_exercise+'" data-is-tandem="false" data-id-exercise="'+name_xml_file+'" id="exercise-'+id_exercise+'" value="'+name+'"></td><td><label style="color:black;" class="common-waiting-tandem_users waiting-users-more-one">'+number_user_waiting+ '</label></td></tr>';
                             
                             }
                             if (number_user_waiting == 0 || number_user_waiting == null){
