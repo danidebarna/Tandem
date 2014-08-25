@@ -242,7 +242,7 @@ jQuery(document).ready(function(){
 					xmlReq.timeout = 100000;
 					xmlReq.overrideMimeType("text/xml");
 			}
-                        alert(url);
+                        //alert(url);
 			xmlReq.open("GET", url, true);
 			xmlReq.send(null);
 		}
@@ -256,10 +256,10 @@ jQuery(document).ready(function(){
 			user_selected = $('#user_selected').val();
 			room_temp = $('#room').val();
 			if (user_selected=="" || user_selected=="-1") {
-				alert("<?php echo $LanguageInstance->get('select_user')?>");
+				//alert("<?php echo $LanguageInstance->get('select_user')?>");
 			} else {
 				if (room_temp=="" || room_temp=="-1") {
-					alert("<?php echo $LanguageInstance->get('select_exercise')?>");
+					//alert("<?php echo $LanguageInstance->get('select_exercise')?>");
 				} else {
 					enable_button('');
 					getXMLRoom(room_temp);
@@ -607,7 +607,8 @@ jQuery(document).ready(function(){
                                 //conexio tandem
                                 if ($(this).data("is-tandem")==false){
                                   //alert("executing XML Room");
-                                    var content = getXMLRoom($(this).data("id-exercise"));
+                                   startModalQuickly();
+                                   var content = getXMLRoom($(this).data("id-exercise"));
                                 }
                                 //alert (content);
                                 
@@ -760,7 +761,14 @@ jQuery(document).ready(function(){
 				  }
 			});
 		},TimerSUAR);	
-                $('#modal-start-task').modal( {onClose: function () {
+               
+               // startModalQuickly();
+            }
+        }
+        
+        function startModalQuickly(){
+        
+             $('#modal-start-task').modal( {onClose: function () {
                     if (show_message_giveup) {
                       //alert('give_up');
                       closeModalAndCountAgain('give_up');
@@ -770,9 +778,9 @@ jQuery(document).ready(function(){
                       $.modal.close(); // must call this!
                   }
                 }})
-                
-            }
+        
         }
+        
         
         function closeModalAndCountAgain(paramString) {
             if (counterW){
@@ -1026,9 +1034,9 @@ jQuery(document).ready(function(){
                             
                             
                                 <?php
-                                echo '<div><h2>Lenguaje: ' . $lang = $_SESSION[LANG] . '</h2></div>' . '<br>';
-                                echo 'ID del Curso: ' . $course_id . '<br>';
-                                echo 'ID Usuario: ' . $user_obj->id . '<br>';
+                               // echo '<div><h2>Lenguaje: ' . $lang = $_SESSION[LANG] . '</h2></div>' . '<br>';
+                               // echo 'ID del Curso: ' . $course_id . '<br>';
+                               // echo 'ID Usuario: ' . $user_obj->id . '<br>';
                                 //print_r($array_exercises);
                                 echo '<br>';
                                 ?>
