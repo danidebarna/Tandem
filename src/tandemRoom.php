@@ -608,6 +608,7 @@ jQuery(document).ready(function(){
                                 if ($(this).data("is-tandem")==false){
                                   //alert("executing XML Room");
                                    startModalQuickly();
+                                   modalTimer();
                                    var content = getXMLRoom($(this).data("id-exercise"));
                                 }
                                 //alert (content);
@@ -731,8 +732,8 @@ jQuery(document).ready(function(){
                 show_message_giveup = true;
                // alert(urlToRedirect);
                // alert(tandem_id);
-                modalTimer();
-                clearInterval(intervalCheck);
+                //modalTimer();
+                //clearInterval(intervalCheck);
                 var TimerSUAR = 1000;
                 intervalCheckHavePartner = setInterval(function(){
 			$.ajax({
